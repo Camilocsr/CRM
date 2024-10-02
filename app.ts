@@ -1,15 +1,25 @@
 import { Client, LocalAuth } from 'whatsapp-web.js';
-import qrcode from 'qrcode-terminal';
+import QRCode from 'qrcode';
+import fs from 'fs';
+import path from 'path';
 
 // Inicializar cliente de WhatsApp con almacenamiento local para autenticación
 const client = new Client({
     authStrategy: new LocalAuth(), // Guarda las sesiones localmente
 });
 
-// Mostrar el QR en la consola
+// Mostrar el QR en una imagen
 client.on('qr', (qr) => {
-    console.log('Escanea este código QR para iniciar sesión en WhatsApp:');
-    qrcode.generate(qr, { small: true });
+    const qrImagePath = path.join(__dirname, 'qr.png'); // Ruta de la imagen
+    QRCode.toFile(qrImagePath, qr, {
+        width: 300, // Ajusta el tamaño según sea necesario
+    }, (err) => {
+        if (err) {
+            console.error('Error al generar el QR:', err);
+        } else {
+            console.log('Código QR guardado en:', qrImagePath);
+        }
+    });
 });
 
 // Confirmar que el cliente está listo
