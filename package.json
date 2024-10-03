@@ -17,6 +17,6 @@
     "typescript": "^5.6.2"
   },
   "scripts": {
-    "start": "nodemon --exec ts-node app.ts"
+    "dev": "nodemon --exec ts-node server.ts"
   }
 }

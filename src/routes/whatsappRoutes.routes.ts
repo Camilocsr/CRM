@@ -1,9 +1,8 @@
 import { Router } from 'express';
-import { sendMessage } from '../controllers/whatsappController';
+import { startWhatsApp } from '../controllers/whatsappController';
 
 const router = Router();
 
-// Ruta para enviar un mensaje por WhatsApp
-router.post('/send', sendMessage);
+router.get('/start', startWhatsApp);
 
 export default router;
