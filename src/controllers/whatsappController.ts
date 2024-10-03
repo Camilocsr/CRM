@@ -1,8 +1,5 @@
 import { Request, Response } from 'express';
 import { generateQRCode } from '../services/whatsappService';
-import QRCode from 'qrcode';
-import fs from 'fs';
-import path from 'path';
 
 export const startWhatsApp = async (req: Request, res: Response) => {
     try {

@@ -5,15 +5,14 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 export const sendMessage = async (req: Request, res: Response): Promise<void> => {
-    const { number, message } = req.body;
+    const { number, message, nombreAgente } = req.body;
 
-    if (!number || !message) {
-        res.status(400).json({ error: 'Número y mensaje son requeridos.' });
+    if (!number || !message || !nombreAgente) {
+        res.status(400).json({ error: 'Número, mensaje y nombre del agente son requeridos.' });
         return;
     }
 
     try {
-        // Buscar el número en la base de datos
         const existingLead = await prisma.lead.findUnique({
             where: {
                 numeroWhatsapp: number,
@@ -25,13 +24,21 @@ export const sendMessage = async (req: Request, res: Response): Promise<void> =>
             return;
         }
 
-        // Construir chatId
+        const agente = await prisma.agente.findFirst({
+            where: {
+                nombre: nombreAgente,
+            },
+        });
+
+        if (!agente) {
+            res.status(404).json({ error: 'Agente no encontrado.' });
+            return;
+        }
+
         const chatId = `${number}@c.us`;
 
-        // Enviar el mensaje
         await client.sendMessage(chatId, message);
 
-        // Agregar el mensaje a la conversación
         let conversation: { sender: string; message: string }[] = [];
 
         try {
@@ -41,12 +48,14 @@ export const sendMessage = async (req: Request, res: Response): Promise<void> =>
             conversation = [];
         }
 
-        conversation.push({ sender: 'whatsapp', message });
+        conversation.push({ sender: `${nombreAgente}`, message });
 
-        // Actualizar la conversación en la base de datos
         await prisma.lead.update({
             where: { id: existingLead.id! },
-            data: { conversacion: JSON.stringify(conversation) },
+            data: {
+                conversacion: JSON.stringify(conversation),
+                idAgente: agente.id,
+            },
         });
 
         res.status(200).json({ success: true, message: 'Mensaje enviado correctamente y conversación actualizada.' });

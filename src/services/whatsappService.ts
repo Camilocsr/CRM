@@ -49,6 +49,17 @@ export const generateQRCode = () => {
             let conversation: { sender: string; message: string }[] = [];
         
             if (!existingLead) {
+                const tipoGestionNoGestionado = await prisma.tipoGestion.findUnique({
+                    where: {
+                        tipoGestion: 'no gestionado',
+                    },
+                });
+
+                if (!tipoGestionNoGestionado) {
+                    console.error('No se encontró el tipo de gestión "no gestionado".');
+                    return;
+                }
+
                 conversation.push({ sender: 'cliente', message: message.body });
         
                 const newLead = await prisma.lead.create({
@@ -56,6 +67,7 @@ export const generateQRCode = () => {
                         nombre: contactName,
                         numeroWhatsapp: contactNumber,
                         conversacion: JSON.stringify(conversation),
+                        idTipoGestion: tipoGestionNoGestionado.id,
                     },
                 });
                 console.log(`Nuevo lead creado: ${JSON.stringify(newLead)}`);
