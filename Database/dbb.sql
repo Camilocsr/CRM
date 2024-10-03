@@ -18,7 +18,7 @@ CREATE TABLE tipo_gestion (
 -- Tabla de leads
 CREATE TABLE leads (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR(100) NOT NULL,
+    nombre VARCHAR(100),
     numero_whatsapp VARCHAR(20) UNIQUE NOT NULL,
     conversacion TEXT,
     id_agente INT,

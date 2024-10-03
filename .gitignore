@@ -1,6 +1,12 @@
 node_modules/
+
 .wwebjs_auth/
 .wwebjs_cache/
+
 public/*
 !public/.gitkeep
+
 .env
+
+## Prisma
+prisma/migrations/

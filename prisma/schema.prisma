@@ -1,0 +1,39 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Agente {
+  id        Int      @id @default(autoincrement())
+  nombre    String
+  correo    String   @unique
+  contrasena String
+  leads     Lead[]   @relation("AgenteLeads")
+}
+
+model TipoGestion {
+  id           Int      @id @default(autoincrement())
+  tipoGestion  String   @unique
+  leads        Lead[]   @relation("TipoGestionLeads")
+}
+
+model Lead {
+  id                Int       @id @default(autoincrement())
+  nombre            String?   // Este campo puede ser nulo
+  numeroWhatsapp    String    @unique // Este campo es obligatorio y debe ser único
+  conversacion      String?   // Este campo puede ser nulo
+  idAgente          Int?      @map("id_agente") // Renombrar el campo para mapear con la base de datos
+  idTipoGestion     Int?      @map("id_tipo_gestion") // Renombrar el campo para mapear con la base de datos
+  agente            Agente?   @relation("AgenteLeads", fields: [idAgente], references: [id])
+  tipoGestion       TipoGestion? @relation("TipoGestionLeads", fields: [idTipoGestion], references: [id])
+}
