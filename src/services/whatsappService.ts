@@ -5,7 +5,7 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
-const client = new Client({
+export const client = new Client({
     authStrategy: new LocalAuth(),
 });
 

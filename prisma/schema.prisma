@@ -29,11 +29,11 @@ model TipoGestion {
 
 model Lead {
   id                Int       @id @default(autoincrement())
-  nombre            String?   // Este campo puede ser nulo
-  numeroWhatsapp    String    @unique // Este campo es obligatorio y debe ser único
-  conversacion      String?   @default("[]") // Cambiado para tener un valor por defecto de un arreglo vacío
-  idAgente          Int?      @map("id_agente") // Renombrar el campo para mapear con la base de datos
-  idTipoGestion     Int?      @map("id_tipo_gestion") // Renombrar el campo para mapear con la base de datos
+  nombre            String?
+  numeroWhatsapp    String    @unique
+  conversacion      String?   @db.Text   // Cambiar de String a Text
+  idAgente          Int?      @map("id_agente")
+  idTipoGestion     Int?      @map("id_tipo_gestion")
   agente            Agente?   @relation("AgenteLeads", fields: [idAgente], references: [id])
   tipoGestion       TipoGestion? @relation("TipoGestionLeads", fields: [idTipoGestion], references: [id])
 }
