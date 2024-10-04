@@ -6,6 +6,14 @@ node_modules/
 public/*
 !public/.gitkeep
 
+uploads/*
+!uploads/.gitkeep
+
+
+
+src/services/uploads/*
+!src/services/uploads/.gitkeep
+
 .env
 
 ## Prisma

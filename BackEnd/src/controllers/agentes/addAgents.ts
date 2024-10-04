@@ -1,13 +1,12 @@
 import { Request, Response } from 'express';
 import { PrismaClient } from '@prisma/client';
-import bcrypt from 'bcrypt';
 
 const prisma = new PrismaClient();
 
 export const addAgents = async (req: Request, res: Response): Promise<void> => {
-    const { nombre, correo, contrasena } = req.body;
+    const { nombre, correo } = req.body;
 
-    if (!nombre || !correo || !contrasena) {
+    if (!nombre || !correo) {
         res.status(400).json({ message: 'Faltan datos requeridos.' });
         return;
     }
@@ -24,14 +23,10 @@ export const addAgents = async (req: Request, res: Response): Promise<void> => {
             return;
         }
 
-        const saltRounds = 10;
-        const hashedPassword = await bcrypt.hash(contrasena, saltRounds);
-
         const newAgent = await prisma.agente.create({
             data: {
                 nombre,
-                correo,
-                contrasena: hashedPassword,
+                correo
             },
         });
 

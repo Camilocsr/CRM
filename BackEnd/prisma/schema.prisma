@@ -17,7 +17,6 @@ model Agente {
   id        Int      @id @default(autoincrement())
   nombre    String
   correo    String   @unique
-  contrasena String
   leads     Lead[]   @relation("AgenteLeads")
 }
 
