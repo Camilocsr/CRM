@@ -18,6 +18,3 @@ src/services/uploads/*
 
 ## Prisma
 prisma/migrations/
-
-## No suir aun
-src/auth

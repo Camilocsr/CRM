@@ -25,7 +25,7 @@ app.use(passport.session());
 
 app.use(express.json());
 
-app.use('/api/auth/google', routesAuth);
+app.use('/api/', routesAuth);
 app.use('/api/whatsapp', whatsappRoutes);
 app.use('/api/', whatsappRoutesAgentes);
 
