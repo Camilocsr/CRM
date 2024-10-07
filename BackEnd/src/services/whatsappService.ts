@@ -138,7 +138,7 @@ export const generateQRCode = () => {
                     where: { id: existingLead.id! },
                     data: { conversacion: JSON.stringify(conversation) },
                 });
-                message.reply('Tu mensaje ha sido registrado.');
+                //message.reply('Tu mensaje ha sido registrado.');
             }
         });
 
