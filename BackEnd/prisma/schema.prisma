@@ -13,10 +13,16 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Rol {
+  ADMIN
+  AGENTE
+}
+
 model Agente {
   id        Int      @id @default(autoincrement())
   nombre    String
   correo    String   @unique
+  rol       Rol      @default(AGENTE)
   leads     Lead[]   @relation("AgenteLeads")
 }
 
