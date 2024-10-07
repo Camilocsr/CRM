@@ -1,12 +1,19 @@
 import express from 'express';
 import session from 'express-session';
 import passport from 'passport';
+import cors from 'cors'; 
 import whatsappRoutes from './src/routes/whatsappRoutes.routes';
 import whatsappRoutesAgentes from './src/routes/agentes/whatsappRoutesAgentes.routes';
 import routesAuth from './src/auth/routes/auth.routes';
 import './src/auth/config/passport-setup';
 
 const app = express();
+
+app.use(cors({
+    origin: 'http://localhost:5173',
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    credentials: true,
+}));
 
 app.use(
     session({

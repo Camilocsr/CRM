@@ -1,34 +1,76 @@
-import React, { useState } from 'react';
-import { Search, MoreVertical, Phone, Video, Send } from 'lucide-react';
-import '../../css/whatsappClone.css'
+import React, { useEffect, useState } from 'react';
+import { Search, MoreVertical, Phone, Video } from 'lucide-react';
+import '../../css/whatsappClone.css';
 
-interface Chat {
+// Definición de las interfaces para Lead y Agente
+interface Lead {
   id: number;
-  name: string;
-  lastMessage: string;
-  time: string;
+  nombre: string;
+  numeroWhatsapp: string;
+  conversacion: string;
+}
+
+interface Agente {
+  id: number;
+  nombre: string;
+  correo: string;
+  rol: string;
+  leads: Lead[];
 }
 
 const WhatsAppClone: React.FC = () => {
   const [selectedChat, setSelectedChat] = useState<number | null>(null);
-  const [message, setMessage] = useState<string>('');
+  const [agente, setAgente] = useState<Agente | null>(null);
 
-  const chats: Chat[] = [
-    { id: 1, name: 'Alice', lastMessage: 'Hey, how are you?', time: '10:30 AM' },
-    { id: 2, name: 'Bob', lastMessage: 'Can we meet tomorrow?', time: '9:45 AM' },
-    { id: 3, name: 'Charlie', lastMessage: 'Thanks for the info!', time: 'Yesterday' },
-  ];
-
-  const handleSendMessage = (): void => {
-    if (message.trim()) {
-      console.log('Sending message:', message);
-      setMessage('');
+  // Función para obtener los datos del agente
+  const fetchAgenteData = async () => {
+    try {
+      const response = await fetch(`http://localhost:3000/api/getAgentes/${encodeURIComponent('iudcdesarrollo@gmail.com')}`);
+      if (!response.ok) throw new Error('Network response was not ok');
+      const data = await response.json();
+      setAgente(data);
+    } catch (error) {
+      console.error('Error fetching agente data:', error);
     }
+  };
+
+  useEffect(() => {
+    fetchAgenteData();
+  }, []);
+
+  // Función para renderizar los mensajes de la conversación
+  const renderMessages = () => {
+    if (!selectedChat) return null;
+
+    const selectedLead = agente?.leads.find((c) => c.id === selectedChat);
+    if (!selectedLead) return null;
+
+    const messages = JSON.parse(selectedLead.conversacion);
+
+    // Imprime el contenido de messages de forma legible
+    console.log(`Este es el array de mensajes: ${JSON.stringify(messages, null, 2)}`);
+
+    return (
+      <div className="flex-1 overflow-y-auto p-4">
+        {messages.map((msg: { sender: string; message: string }, index: number) => (
+          <div
+            key={index}
+            className={`flex mb-2 ${msg.sender === 'cliente' ? 'justify-start' : 'justify-end'}`}
+          >
+            <div
+              className={`p-2 rounded-lg ${msg.sender === 'cliente' ? 'bg-blue-500 text-white' : 'bg-gray-300 text-black'}`}
+            >
+              {msg.message}
+            </div>
+          </div>
+        ))}
+      </div>
+    );
   };
 
   return (
     <div className="flex h-screen bg-gray-100">
-      {/* Left sidebar */}
+      {/* Sidebar izquierdo */}
       <div className="w-1/3 bg-white border-r">
         <div className="p-4 bg-gray-200 flex justify-between items-center">
           <h1 className="text-xl font-semibold">WhatsApp</h1>
@@ -45,26 +87,23 @@ const WhatsAppClone: React.FC = () => {
           </div>
         </div>
         <div className="overflow-y-auto h-[calc(100%-120px)]">
-          {chats.map((chat) => (
+          {agente?.leads.map((lead) => (
             <div
-              key={chat.id}
-              className={`flex items-center p-3 hover:bg-gray-100 cursor-pointer ${
-                selectedChat === chat.id ? 'bg-gray-200' : ''
-              }`}
-              onClick={() => setSelectedChat(chat.id)}
+              key={lead.id}
+              className={`flex items-center p-3 hover:bg-gray-100 cursor-pointer ${selectedChat === lead.id ? 'bg-gray-200' : ''}`}
+              onClick={() => setSelectedChat(lead.id)}
             >
               <div className="w-12 h-12 bg-gray-300 rounded-full mr-3"></div>
               <div className="flex-1">
-                <h2 className="font-semibold">{chat.name}</h2>
-                <p className="text-sm text-gray-600 truncate">{chat.lastMessage}</p>
+                <h2 className="font-semibold">{lead.nombre}</h2>
+                <p className="text-sm text-gray-600 truncate">{lead.conversacion}</p>
               </div>
-              <span className="text-xs text-gray-500">{chat.time}</span>
             </div>
           ))}
         </div>
       </div>
 
-      {/* Right chat area */}
+      {/* Área de chat derecho */}
       <div className="flex-1 flex flex-col">
         {selectedChat ? (
           <>
@@ -72,7 +111,7 @@ const WhatsAppClone: React.FC = () => {
               <div className="flex items-center">
                 <div className="w-10 h-10 bg-gray-300 rounded-full mr-3"></div>
                 <h2 className="font-semibold">
-                  {chats.find((c) => c.id === selectedChat)?.name}
+                  {agente?.leads.find((c) => c.id === selectedChat)?.nombre}
                 </h2>
               </div>
               <div className="flex space-x-4">
@@ -81,25 +120,11 @@ const WhatsAppClone: React.FC = () => {
                 <MoreVertical size={20} />
               </div>
             </div>
-            <div className="flex-1 overflow-y-auto p-4">
-              {/* Chat messages would go here */}
-            </div>
-            <div className="p-4 bg-gray-200 flex items-center">
-              <input
-                type="text"
-                placeholder="Type a message"
-                className="flex-1 rounded-full px-4 py-2 outline-none"
-                value={message}
-                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                  setMessage(e.target.value)
-                }
-              />
-              <Send
-                size={20}
-                className="ml-2 text-green-500 cursor-pointer"
-                onClick={handleSendMessage}
-              />
-            </div>
+
+            {/* Renderizar mensajes aquí */}
+            {renderMessages()}
+
+            {/* Se eliminó el área de entrada de mensajes */}
           </>
         ) : (
           <div className="flex-1 flex items-center justify-center bg-gray-100">
