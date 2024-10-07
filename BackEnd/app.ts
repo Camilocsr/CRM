@@ -14,8 +14,8 @@ app.use(
         resave: false,
         saveUninitialized: false,
         cookie: {
-            secure: false, // Cambiar a true en producción con HTTPS
-            maxAge: 1000 * 60 * 60 * 24, // 1 día
+            secure: false,
+            maxAge: 1000 * 60 * 60 * 24,
         },
     })
 );
@@ -25,7 +25,7 @@ app.use(passport.session());
 
 app.use(express.json());
 
-app.use('/api/', routesAuth);
+app.use('/api', routesAuth);
 app.use('/api/whatsapp', whatsappRoutes);
 app.use('/api/', whatsappRoutesAgentes);
 
