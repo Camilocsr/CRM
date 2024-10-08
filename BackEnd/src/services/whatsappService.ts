@@ -9,7 +9,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const prisma = new PrismaClient();
-const bucketName = process.env.BUCKED_S3;
+const bucketName = process.env.BUCKET_S3;
 
 if (!bucketName) {
     throw new Error("El nombre del bucket S3 no está definido en las variables de entorno.");
@@ -71,7 +71,6 @@ export const generateQRCode = () => {
             
                 const s3Url = await uploadFileToS3(bucketName, filePath);
                 
-                // Eliminar el archivo local después de subirlo a S3
                 try {
                     await fs.unlink(filePath);
                     console.log('Archivo local eliminado:', filePath);
@@ -82,7 +81,6 @@ export const generateQRCode = () => {
                 return s3Url;
             };
 
-            // Obtener la hora actual en formato HH:MM:SS
             const currentTime = new Date().toLocaleTimeString('es-ES', { hour12: false });
 
             if (!existingLead) {

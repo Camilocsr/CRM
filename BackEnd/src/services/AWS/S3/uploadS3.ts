@@ -1,13 +1,14 @@
 import { S3Client, PutObjectCommand, PutObjectCommandInput } from "@aws-sdk/client-s3";
-import { readFile } from "fs/promises"; 
+import { readFile } from "fs/promises";
 import { basename, join } from "path";
 import { v4 as uuidv4 } from "uuid";
 import ffmpeg from "fluent-ffmpeg";
 import ffmpegPath from "ffmpeg-static";
+import isNotImageFile from "../../../utils/isNotAudioFile";
 
 async function removeOpusCodec(filePath: string): Promise<string> {
     return new Promise((resolve, reject) => {
-        const outputFilePath = join(__dirname, '../../uploads', `${uuidv4()}.mp3`); 
+        const outputFilePath = join(__dirname, '../../uploads', `${uuidv4()}.mp3`);
 
         if (!ffmpegPath) {
             reject(new Error('FFmpeg no encontrado.'));
@@ -16,7 +17,7 @@ async function removeOpusCodec(filePath: string): Promise<string> {
 
         ffmpeg(filePath)
             .setFfmpegPath(ffmpegPath)
-            .audioCodec('libmp3lame') 
+            .audioCodec('libmp3lame')
             .toFormat('mp3')
             .on('end', () => {
                 console.log('Eliminación de codec opus completada');
@@ -33,9 +34,19 @@ async function removeOpusCodec(filePath: string): Promise<string> {
 async function uploadFileToS3(bucketName: string, filePath: string): Promise<string> {
     const s3Client = new S3Client({});
     try {
-        const processedFilePath = await removeOpusCodec(filePath);
+        const isImagen = await isNotImageFile(filePath);
+
+        let processedFilePath;
+
+        if (isImagen) {
+            processedFilePath = await removeOpusCodec(filePath);
+        }
+        else {
+            processedFilePath = filePath;
+        }
+
         const fileContent = await readFile(processedFilePath);
-        
+
         const originalFileName = basename(processedFilePath);
         const fileExtension = originalFileName.split('.').pop();
 
