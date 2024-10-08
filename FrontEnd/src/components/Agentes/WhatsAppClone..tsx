@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Search } from 'lucide-react';
+import Split from 'react-split';
 import '../../css/whatsappClone.css';
 import { Agente, Message, Download } from './types';
 import LeadList from './LeadList';
@@ -30,10 +31,13 @@ const WhatsAppClone: React.FC = () => {
   }, []);
 
   const downloadFile = async (url: string, fileName: string, chatId: number) => {
-    const response = await axios.get(url, { responseType: 'blob' });
-    const urlBlob = window.URL.createObjectURL(new Blob([response.data]));
-
-    setDownloads(prev => [...prev, { url: urlBlob, fileName, downloaded: true, chatId }]);
+    try {
+      const response = await axios.get(url, { responseType: 'blob' });
+      const urlBlob = window.URL.createObjectURL(new Blob([response.data]));
+      setDownloads((prev) => [...prev, { url: urlBlob, fileName, downloaded: true, chatId }]);
+    } catch (error) {
+      console.error('Error downloading file:', error);
+    }
   };
 
   const renderMessages = () => {
@@ -58,8 +62,19 @@ const WhatsAppClone: React.FC = () => {
   };
 
   return (
-    <div className="flex h-screen bg-gray-100">
-      <div className="w-1/3 bg-white border-r">
+    <Split
+      className="flex h-screen bg-gray-100"
+      sizes={[25, 75]}
+      minSize={200}
+      expandToMin={false}
+      gutterSize={10}
+      gutterAlign="center"
+      snapOffset={30}
+      dragInterval={1}
+      direction="horizontal"
+      cursor="col-resize"
+    >
+      <div className="bg-white border-r overflow-hidden">
         <div className="p-4 bg-gray-200 flex justify-between items-center">
           <h1 className="text-xl font-semibold">WhatsApp</h1>
         </div>
@@ -76,7 +91,7 @@ const WhatsAppClone: React.FC = () => {
         <LeadList leads={agente?.leads || []} selectedChat={selectedChat} setSelectedChat={setSelectedChat} />
       </div>
 
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col overflow-hidden">
         {selectedChat ? (
           <>
             <ChatHeader lead={agente?.leads.find((c) => c.id === selectedChat)} />
@@ -95,7 +110,7 @@ const WhatsAppClone: React.FC = () => {
           </div>
         )}
       </div>
-    </div>
+    </Split>
   );
 };
 

@@ -219,3 +219,25 @@
 .text-gray-500 {
     color: #a0aec0;
 }
+
+.gutter {
+    background-color: #eee;
+    background-repeat: no-repeat;
+    background-position: 50%;
+}
+
+.gutter.gutter-horizontal {
+    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAeCAYAAADkftS9AAAAIklEQVQoU2M4c+bMfxAGAgYYmwGrIIiDjrELjpo5aiZeMwF+yNnOs5KSvgAAAABJRU5ErkJggg==');
+    cursor: col-resize;
+}
+
+/* Ensure the split container takes full height */
+.split {
+    display: flex;
+    flex-direction: row;
+}
+
+/* Ensure both panels can scroll independently */
+.split>div {
+    overflow-y: auto;
+}
