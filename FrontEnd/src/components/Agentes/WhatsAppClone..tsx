@@ -3,6 +3,9 @@ import axios from 'axios';
 import { Search, MoreVertical, Phone, Video } from 'lucide-react';
 import '../../css/whatsappClone.css';
 
+// llamamos a las variables de entorno necesarias.
+const enpointAwsBucked = import.meta.env.VITE_ENPOINT_AWS_BUCKED;
+
 interface Lead {
   id: number;
   nombre: string;
@@ -69,7 +72,7 @@ const WhatsAppClone: React.FC = () => {
     return (
       <div className="flex-1 overflow-y-auto p-4">
         {messages.map((msg: Message, index: number) => {
-          const isFileUrl = msg.message.includes('https://pruevasarchivos.s3.amazonaws.com/uploads/');
+          const isFileUrl = msg.message.includes(`${enpointAwsBucked}`);
 
           return (
             <div key={index} className={`flex mb-2 ${msg.Cliente ? 'justify-start' : 'justify-end'}`}>
