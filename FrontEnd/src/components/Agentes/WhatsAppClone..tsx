@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import axios from 'axios';
 import { Search, MoreVertical, Phone, Video } from 'lucide-react';
 import '../../css/whatsappClone.css';
 
@@ -23,9 +24,17 @@ interface Message {
   message: string;
 }
 
+interface Download {
+  url: string;
+  fileName: string;
+  downloaded: boolean;
+  chatId: number;
+}
+
 const WhatsAppClone: React.FC = () => {
   const [selectedChat, setSelectedChat] = useState<number | null>(null);
   const [agente, setAgente] = useState<Agente | null>(null);
+  const [downloads, setDownloads] = useState<Download[]>([]);
 
   const fetchAgenteData = async () => {
     try {
@@ -42,6 +51,13 @@ const WhatsAppClone: React.FC = () => {
     fetchAgenteData();
   }, []);
 
+  const downloadFile = async (url: string, fileName: string, chatId: number) => {
+    const response = await axios.get(url, { responseType: 'blob' });
+    const urlBlob = window.URL.createObjectURL(new Blob([response.data]));
+
+    setDownloads(prev => [...prev, { url: urlBlob, fileName, downloaded: true, chatId }]);
+  };
+
   const renderMessages = () => {
     if (!selectedChat) return null;
 
@@ -52,13 +68,47 @@ const WhatsAppClone: React.FC = () => {
 
     return (
       <div className="flex-1 overflow-y-auto p-4">
-        {messages.map((msg: Message, index: number) => (
-          <div key={index} className={`flex mb-2 ${msg.Cliente ? 'justify-start' : 'justify-end'}`}>
-            <div className={`message ${msg.Cliente ? 'cliente' : 'agente'}`}>
-              {msg.message}
+        {messages.map((msg: Message, index: number) => {
+          const isFileUrl = msg.message.includes('https://pruevasarchivos.s3.amazonaws.com/uploads/');
+
+          return (
+            <div key={index} className={`flex mb-2 ${msg.Cliente ? 'justify-start' : 'justify-end'}`}>
+              <div className={`message ${msg.Cliente ? 'cliente' : 'agente'}`}>
+                {isFileUrl ? (
+                  <span>
+                    <button
+                      className="text-blue-500 underline"
+                      onClick={() => {
+                        if (!downloads.find(download => download.url.includes(msg.message) && download.chatId === selectedChat)) {
+                          downloadFile(msg.message, msg.message.split('/').pop() || 'file.mp3', selectedChat);
+                        }
+                      }}
+                    >
+                      Descargar archivo
+                    </button>
+                  </span>
+                ) : (
+                  msg.message
+                )}
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
+
+        {/* Renderizar los archivos descargados con su reproductor solo para la conversación actual */}
+        <div>
+          {downloads
+            .filter(download => download.chatId === selectedChat)
+            .map((download, index) => (
+              <div key={index}>
+                <p>{download.fileName}</p>
+                <audio controls>
+                  <source src={download.url} type="audio/mpeg" />
+                  Tu navegador no soporta el elemento de audio.
+                </audio>
+              </div>
+            ))}
+        </div>
       </div>
     );
   };
