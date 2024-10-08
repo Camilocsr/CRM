@@ -50,7 +50,7 @@ const MessageList: React.FC<MessageListProps> = ({ messages, selectedChat, downl
                     </button>
                   )
                 ) : isImage ? (
-                  <img src={msg.message} alt="Imagen" className="max-w-full h-auto" />
+                  <img src={msg.message} alt="Imagen" className="max-w-xs h-auto" height={300}/>
                 ) : isVideo ? (
                   <video controls className="max-w-full h-auto">
                     <source src={msg.message} type="video/mp4" />

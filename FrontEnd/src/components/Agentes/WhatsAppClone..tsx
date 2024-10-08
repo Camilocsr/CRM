@@ -76,7 +76,7 @@ const WhatsAppClone: React.FC = () => {
     >
       <div className="bg-white border-r overflow-hidden">
         <div className="p-4 bg-gray-200 flex justify-between items-center">
-          <h1 className="text-xl font-semibold">WhatsApp</h1>
+          <h1 className="text-xl font-semibold">iudcdesarrollo@gmail.com</h1>
         </div>
         <div className="p-2">
           <div className="flex items-center bg-gray-100 rounded-full px-3 py-1">
@@ -96,12 +96,20 @@ const WhatsAppClone: React.FC = () => {
           <>
             <ChatHeader lead={agente?.leads.find((c) => c.id === selectedChat)} />
             {renderMessages()}
-            <div className="p-4 bg-gray-200">
+            <div className="p-4 bg-gray-200 flex items-center">
               <input
                 type="text"
-                placeholder="Type a message"
+                placeholder="Escribe un mensaje"
                 className="w-full p-2 rounded-full border border-gray-300 focus:outline-none focus:border-blue-500"
               />
+              <button
+                className="ml-2 p-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition duration-200"
+                onClick={() => {
+                  console.log('Mensaje enviado');
+                }}
+              >
+                Enviar
+              </button>
             </div>
           </>
         ) : (
