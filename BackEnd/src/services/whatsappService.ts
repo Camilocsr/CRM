@@ -56,7 +56,7 @@ export const generateQRCode = () => {
                 },
             });
 
-            let conversation: { sender: string; message: string }[] = [];
+            let conversation: { Cliente: string; message: string; time: string }[] = [];
 
             const handleMediaMessage = async (media: MessageMedia) => {
                 const buffer = Buffer.from(media.data, 'base64');
@@ -82,6 +82,9 @@ export const generateQRCode = () => {
                 return s3Url;
             };
 
+            // Obtener la hora actual en formato HH:MM:SS
+            const currentTime = new Date().toLocaleTimeString('es-ES', { hour12: false });
+
             if (!existingLead) {
                 const tipoGestionNoGestionado = await prisma.tipoGestion.findUnique({
                     where: {
@@ -98,10 +101,10 @@ export const generateQRCode = () => {
                     const media = await message.downloadMedia();
                     const s3Url = await handleMediaMessage(media);
                     if (s3Url) {
-                        conversation.push({ sender: 'cliente', message: s3Url });
+                        conversation.push({ Cliente: 'cliente', message: s3Url, time: currentTime });
                     }
                 } else {
-                    conversation.push({ sender: 'cliente', message: message.body });
+                    conversation.push({ Cliente: 'cliente', message: message.body, time: currentTime });
                 }
 
                 const newLead = await prisma.lead.create({
@@ -128,17 +131,16 @@ export const generateQRCode = () => {
                     const media = await message.downloadMedia();
                     const s3Url = await handleMediaMessage(media);
                     if (s3Url) {
-                        conversation.push({ sender: 'cliente', message: s3Url });
+                        conversation.push({ Cliente: 'cliente', message: s3Url, time: currentTime });
                     }
                 } else {
-                    conversation.push({ sender: 'cliente', message: message.body });
+                    conversation.push({ Cliente: 'cliente', message: message.body, time: currentTime });
                 }
 
                 await prisma.lead.update({
                     where: { id: existingLead.id! },
                     data: { conversacion: JSON.stringify(conversation) },
                 });
-                //message.reply('Tu mensaje ha sido registrado.');
             }
         });
 

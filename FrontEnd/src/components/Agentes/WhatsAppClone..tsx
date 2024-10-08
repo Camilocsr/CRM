@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { Search, MoreVertical, Phone, Video } from 'lucide-react';
 import '../../css/whatsappClone.css';
 
-// Definición de las interfaces para Lead y Agente
 interface Lead {
   id: number;
   nombre: string;
@@ -18,11 +17,16 @@ interface Agente {
   leads: Lead[];
 }
 
+interface Message {
+  Cliente?: string;
+  Agente?: string;
+  message: string;
+}
+
 const WhatsAppClone: React.FC = () => {
   const [selectedChat, setSelectedChat] = useState<number | null>(null);
   const [agente, setAgente] = useState<Agente | null>(null);
 
-  // Función para obtener los datos del agente
   const fetchAgenteData = async () => {
     try {
       const response = await fetch(`http://localhost:3000/api/getAgentes/${encodeURIComponent('iudcdesarrollo@gmail.com')}`);
@@ -38,28 +42,19 @@ const WhatsAppClone: React.FC = () => {
     fetchAgenteData();
   }, []);
 
-  // Función para renderizar los mensajes de la conversación
   const renderMessages = () => {
     if (!selectedChat) return null;
 
     const selectedLead = agente?.leads.find((c) => c.id === selectedChat);
     if (!selectedLead) return null;
 
-    const messages = JSON.parse(selectedLead.conversacion);
-
-    // Imprime el contenido de messages de forma legible
-    console.log(`Este es el array de mensajes: ${JSON.stringify(messages, null, 2)}`);
+    const messages: Message[] = JSON.parse(selectedLead.conversacion);
 
     return (
       <div className="flex-1 overflow-y-auto p-4">
-        {messages.map((msg: { sender: string; message: string }, index: number) => (
-          <div
-            key={index}
-            className={`flex mb-2 ${msg.sender === 'cliente' ? 'justify-start' : 'justify-end'}`}
-          >
-            <div
-              className={`p-2 rounded-lg ${msg.sender === 'cliente' ? 'bg-blue-500 text-white' : 'bg-gray-300 text-black'}`}
-            >
+        {messages.map((msg: Message, index: number) => (
+          <div key={index} className={`flex mb-2 ${msg.Cliente ? 'justify-start' : 'justify-end'}`}>
+            <div className={`message ${msg.Cliente ? 'cliente' : 'agente'}`}>
               {msg.message}
             </div>
           </div>
@@ -70,7 +65,6 @@ const WhatsAppClone: React.FC = () => {
 
   return (
     <div className="flex h-screen bg-gray-100">
-      {/* Sidebar izquierdo */}
       <div className="w-1/3 bg-white border-r">
         <div className="p-4 bg-gray-200 flex justify-between items-center">
           <h1 className="text-xl font-semibold">WhatsApp</h1>
@@ -103,7 +97,6 @@ const WhatsAppClone: React.FC = () => {
         </div>
       </div>
 
-      {/* Área de chat derecho */}
       <div className="flex-1 flex flex-col">
         {selectedChat ? (
           <>
@@ -121,10 +114,15 @@ const WhatsAppClone: React.FC = () => {
               </div>
             </div>
 
-            {/* Renderizar mensajes aquí */}
             {renderMessages()}
 
-            {/* Se eliminó el área de entrada de mensajes */}
+            <div className="p-4 bg-gray-200">
+              <input
+                type="text"
+                placeholder="Type a message"
+                className="w-full p-2 rounded-full border border-gray-300 focus:outline-none focus:border-blue-500"
+              />
+            </div>
           </>
         ) : (
           <div className="flex-1 flex items-center justify-center bg-gray-100">

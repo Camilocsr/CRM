@@ -39,7 +39,7 @@ export const sendMessage = async (req: Request, res: Response): Promise<void> =>
 
         await client.sendMessage(chatId, message);
 
-        let conversation: { sender: string; message: string }[] = [];
+        let conversation: { Agente: string; message: string; time: string }[] = [];
 
         try {
             conversation = existingLead.conversacion ? JSON.parse(existingLead.conversacion) : [];
@@ -48,7 +48,10 @@ export const sendMessage = async (req: Request, res: Response): Promise<void> =>
             conversation = [];
         }
 
-        conversation.push({ sender: `${nombreAgente}`, message });
+        // Obtener la hora actual en formato HH:MM:SS
+        const currentTime = new Date().toLocaleTimeString('es-ES', { hour12: false });
+
+        conversation.push({ Agente: `${nombreAgente}`, message, time: currentTime });
 
         await prisma.lead.update({
             where: { id: existingLead.id! },

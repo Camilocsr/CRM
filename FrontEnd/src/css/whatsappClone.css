@@ -1,6 +1,27 @@
+/* General layout */
+.flex {
+    display: flex;
+}
+
+.h-screen {
+    height: 100vh;
+}
+
+.bg-gray-100 {
+    background-color: #f7fafc;
+}
+
 /* Left sidebar */
 .w-1\/3 {
     width: 33.3333%;
+}
+
+.bg-white {
+    background-color: #ffffff;
+}
+
+.border-r {
+    border-right-width: 1px;
 }
 
 .p-4 {
@@ -11,16 +32,20 @@
     background-color: #edf2f7;
 }
 
-.flex-1 {
-    flex: 1;
+.justify-between {
+    justify-content: space-between;
 }
 
 .items-center {
     align-items: center;
 }
 
-.justify-between {
-    justify-content: space-between;
+.text-xl {
+    font-size: 1.25rem;
+}
+
+.font-semibold {
+    font-weight: 600;
 }
 
 .p-2 {
@@ -90,10 +115,6 @@
     margin-right: 0.75rem;
 }
 
-.font-semibold {
-    font-weight: 600;
-}
-
 .text-sm {
     font-size: 0.875rem;
 }
@@ -108,26 +129,80 @@
     white-space: nowrap;
 }
 
-.text-xs {
-    font-size: 0.75rem;
+/* Right chat area */
+.flex-1 {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
 }
 
-/* Right chat area */
 .flex-col {
     flex-direction: column;
 }
 
-.flex-space-x-4 {
-    display: flex;
-    gap: 1rem;
+.w-10 {
+    width: 2.5rem;
+}
+
+.h-10 {
+    height: 2.5rem;
+}
+
+.space-x-4>*+* {
+    margin-left: 1rem;
 }
 
 .bg-transparent {
     background-color: transparent;
 }
 
-.text-green-500 {
-    color: #48bb78;
+/* Messages */
+.message {
+    max-width: 70%;
+    padding: 10px 15px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.cliente {
+    background-color: #e6f7ff;
+    color: #333;
+    align-self: flex-start;
+}
+
+.agente {
+    background-color: #cce5ff;
+    color: #333;
+    align-self: flex-end;
+}
+
+.justify-start {
+    justify-content: flex-start;
+}
+
+.justify-end {
+    justify-content: flex-end;
+}
+
+/* Chat input */
+.w-full {
+    width: 100%;
+}
+
+.border {
+    border-width: 1px;
+}
+
+.border-gray-300 {
+    border-color: #e2e8f0;
+}
+
+.focus\:outline-none:focus {
+    outline: none;
+}
+
+.focus\:border-blue-500:focus {
+    border-color: #4299e1;
 }
 
 /* Placeholder when no chat is selected */
@@ -141,11 +216,6 @@
     font-size: 1.25rem;
 }
 
-/* Chat input */
-.input-message {
-    flex: 1;
-    padding: 0.5rem 1rem;
-    border-radius: 9999px;
-    border: 1px solid #e2e8f0;
-    outline: none;
+.text-gray-500 {
+    color: #a0aec0;
 }
