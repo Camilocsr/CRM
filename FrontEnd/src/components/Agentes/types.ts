@@ -25,3 +25,10 @@ export interface Download {
     downloaded: boolean;
     chatId: number;
 }
+
+export interface MessageSenderProps {
+    selectedChat: number | null;
+    numberWhatsApp: string; // Número de WhatsApp que ahora se pasa como prop
+    nombreAgente: string; // Nombre del agente que ahora se pasa como prop
+    enpointSenderMessage: string;
+}

@@ -7,6 +7,7 @@ import { Agente, Message, Download } from './types';
 import LeadList from './LeadList';
 import MessageList from './MessageList';
 import ChatHeader from './ChatHeader';
+import MessageSender from './MessageSender';
 
 // Enpoint de aws.
 const enpointAwsBucked = import.meta.env.VITE_ENPOINT_AWS_BUCKED;
@@ -18,7 +19,6 @@ const WhatsAppClone: React.FC = () => {
   const [selectedChat, setSelectedChat] = useState<number | null>(null);
   const [agente, setAgente] = useState<Agente | null>(null);
   const [downloads, setDownloads] = useState<Download[]>([]);
-  const [messageText, setMessageText] = useState<string>('');
 
   const fetchAgenteData = async () => {
     try {
@@ -43,26 +43,6 @@ const WhatsAppClone: React.FC = () => {
       setDownloads((prev) => [...prev, { url: urlBlob, fileName, downloaded: true, chatId }]);
     } catch (error) {
       console.error('Error downloading file:', error);
-    }
-  };
-
-  const sendMessage = async () => {
-    if (!selectedChat || !agente) return;
-
-    const selectedLead = agente.leads.find((c) => c.id === selectedChat);
-    if (!selectedLead) return;
-
-    const messagePayload = {
-      number: selectedLead.numeroWhatsapp,
-      message: messageText,
-      nombreAgente: agente.nombre
-    };
-
-    try {
-      await axios.post(enpointSenderMessage, messagePayload);
-      console.log('Mensaje enviado con éxito');
-    } catch (error) {
-      console.error('Error enviando mensaje:', error);
     }
   };
 
@@ -120,27 +100,20 @@ const WhatsAppClone: React.FC = () => {
       <div className="flex-1 flex flex-col overflow-hidden">
         {selectedChat ? (
           <>
-            <ChatHeader lead={agente?.leads.find((c) => c.id === selectedChat)} />
+            <ChatHeader lead={agente?.leads.find((c) => c.id === selectedChat) || null} />
             {renderMessages()}
-            <div className="p-4 bg-gray-200 flex items-center">
-              <input
-                type="text"
-                placeholder="Escribe un mensaje"
-                value={messageText}
-                onChange={(e) => setMessageText(e.target.value)}
-                className="w-full p-2 rounded-full border border-gray-300 focus:outline-none focus:border-blue-500"
+            {agente && (
+              <MessageSender
+                selectedChat={selectedChat}
+                numberWhatsApp={agente.leads.find((c) => c.id === selectedChat)?.numeroWhatsapp || ''}
+                nombreAgente={agente.nombre}
+                enpointSenderMessage={enpointSenderMessage}
               />
-              <button
-                className="ml-2 p-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition duration-200"
-                onClick={sendMessage}
-              >
-                Enviar
-              </button>
-            </div>
+            )}
           </>
         ) : (
           <div className="flex-1 flex items-center justify-center bg-gray-100">
-            <p className="text-xl text-gray-500">Selecciona una conversacion</p>
+            <p className="text-xl text-gray-500">Selecciona una conversación</p>
           </div>
         )}
       </div>
