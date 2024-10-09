@@ -5,9 +5,7 @@ import Split from 'react-split';
 import '../../css/whatsappClone.css';
 import { Agente, Message, Download } from './types';
 import LeadList from './LeadList';
-import MessageList from './MessageList';
-import ChatHeader from './ChatHeader';
-import MessageSender from './MessageSender';
+import ChatWindow from './ChatWindow';
 import WebSocketHandler from './WebSocketHandler';
 
 // Enpoint de aws.
@@ -66,27 +64,6 @@ const WhatsAppClone: React.FC = () => {
     }
   };
 
-  const renderMessages = () => {
-    if (!selectedChat || !agente) return null;
-
-    const selectedLead = agente.leads.find((c) => c.id === selectedChat);
-    if (!selectedLead) return null;
-
-    const messages: Message[] = JSON.parse(selectedLead.conversacion);
-
-    return (
-      <div className="flex-1 overflow-y-auto p-4 flex flex-col">
-        <MessageList
-          messages={messages}
-          selectedChat={selectedChat}
-          downloads={downloads}
-          downloadFile={downloadFile}
-          enpointAwsBucked={enpointAwsBucked}
-        />
-      </div>
-    );
-  };
-
   return (
     <>
       <WebSocketHandler url={websocketUrl} onMessage={handleWebSocketMessage} />
@@ -120,24 +97,14 @@ const WhatsAppClone: React.FC = () => {
         </div>
 
         <div className="flex-1 flex flex-col overflow-hidden">
-          {selectedChat ? (
-            <>
-              <ChatHeader lead={agente?.leads.find((c) => c.id === selectedChat) || null} />
-              {renderMessages()}
-              {agente && (
-                <MessageSender
-                  selectedChat={selectedChat}
-                  numberWhatsApp={agente.leads.find((c) => c.id === selectedChat)?.numeroWhatsapp || ''}
-                  nombreAgente={agente.nombre}
-                  enpointSenderMessage={enpointSenderMessage}
-                />
-              )}
-            </>
-          ) : (
-            <div className="flex-1 flex items-center justify-center bg-gray-100">
-              <p className="text-xl text-gray-500">Selecciona una conversación</p>
-            </div>
-          )}
+          <ChatWindow
+            selectedChat={selectedChat}
+            agente={agente}
+            downloads={downloads}
+            downloadFile={downloadFile}
+            enpointAwsBucked={enpointAwsBucked}
+            enpointSenderMessage={enpointSenderMessage}
+          />
         </div>
       </Split>
     </>
