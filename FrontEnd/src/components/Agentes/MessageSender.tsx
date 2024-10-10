@@ -11,7 +11,7 @@ const MessageSender: React.FC<MessageSenderProps> = ({
     const [messageText, setMessageText] = useState<string>('');
 
     const sendMessage = async () => {
-        if (!selectedChat) return;
+        if (!selectedChat || !messageText.trim()) return;
 
         const messagePayload = {
             number: numberWhatsApp,
@@ -28,6 +28,13 @@ const MessageSender: React.FC<MessageSenderProps> = ({
         }
     };
 
+    const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            sendMessage();
+        }
+    };
+
     return (
         <div className="p-4 bg-gray-200 flex items-center">
             <input
@@ -35,6 +42,7 @@ const MessageSender: React.FC<MessageSenderProps> = ({
                 placeholder="Escribe un mensaje"
                 value={messageText}
                 onChange={(e) => setMessageText(e.target.value)}
+                onKeyPress={handleKeyPress} // Escucha el evento de tecla
                 className="w-full p-2 rounded-full border border-gray-300 focus:outline-none focus:border-blue-500"
             />
             <button

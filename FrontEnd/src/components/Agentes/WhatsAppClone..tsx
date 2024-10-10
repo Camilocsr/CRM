@@ -27,7 +27,7 @@ const WhatsAppClone: React.FC = () => {
 
   const fetchAgenteData = async () => {
     try {
-      const response = await fetch(`${enpointGetInfoAgentes}${encodeURIComponent('iudcdesarrollo@gmail.com')}`);
+      const response = await fetch(`${enpointGetInfoAgentes}${encodeURIComponent('iudcdesarrollo@gamil.com')}`);
       if (!response.ok) throw new Error('Network response was not ok');
       const data = await response.json();
       console.log(data);
