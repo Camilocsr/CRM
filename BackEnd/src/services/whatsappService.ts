@@ -19,6 +19,32 @@ export const client = new Client({
     authStrategy: new LocalAuth(),
 });
 
+// Función para obtener el agente con menos leads asignados
+async function getAgentWithFewestLeads() {
+    const agents = await prisma.agente.findMany({
+        include: {
+            _count: {
+                select: { leads: true }
+            }
+        },
+        where: {
+            rol: 'AGENTE'
+        },
+        orderBy: {
+            leads: {
+                _count: 'asc'
+            }
+        }
+    });
+
+    if (agents.length === 0) {
+        throw new Error('No hay agentes disponibles para asignar leads');
+    }
+
+    // Si todos tienen el mismo número de leads, devuelve el primero
+    return agents[0];
+}
+
 export const generateQRCode = () => {
     return new Promise<string>((resolve, reject) => {
         client.on('qr', (qr) => {
@@ -95,6 +121,9 @@ export const generateQRCode = () => {
                     return;
                 }
 
+                // Obtener el agente con menos leads
+                const assignedAgent = await getAgentWithFewestLeads();
+
                 if (message.hasMedia) {
                     const media = await message.downloadMedia();
                     const s3Url = await handleMediaMessage(media);
@@ -111,10 +140,11 @@ export const generateQRCode = () => {
                         numeroWhatsapp: contactNumber,
                         conversacion: JSON.stringify(conversation),
                         idTipoGestion: tipoGestionNoGestionado.id,
+                        idAgente: assignedAgent.id, // Asignar el lead al agente seleccionado
                     },
                 });
-                console.log(`Nuevo lead creado: ${JSON.stringify(newLead)}`);
-                message.reply('¡Gracias! Tu información ha sido registrada.');
+                console.log(`Nuevo lead creado y asignado al agente ${assignedAgent.nombre}: ${JSON.stringify(newLead)}`);
+                message.reply('¡Gracias! Tu información ha sido registrada y un agente te atenderá pronto.');
             } else {
                 console.log(`El lead ya existe: ${JSON.stringify(existingLead)}`);
 
