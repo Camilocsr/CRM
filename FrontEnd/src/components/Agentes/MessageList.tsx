@@ -45,9 +45,9 @@ const MessageList: React.FC<MessageListProps> = ({
             {msg.Cliente && (
               <div className="mr-2">
                 {profilePictureUrl ? (
-                  <img src={profilePictureUrl} alt="Profile" className="w-8 h-8 rounded-full" />
+                  <img src={profilePictureUrl} alt="Profile" className="w-6 h-6 rounded-full" height={35}/>
                 ) : (
-                  <div className="w-8 h-8 bg-gray-300 rounded-full"></div>
+                  <div className="w-6 h-6 bg-gray-300 rounded-full"></div>
                 )}
               </div>
             )}

@@ -1,22 +1,22 @@
 import React from 'react';
-import { Video, Phone, MoreVertical } from 'lucide-react';
 import { Lead } from './types';
+import { Video, Phone, MoreVertical } from 'lucide-react';
 
 interface ChatHeaderProps {
-  lead: Lead | null;
+  lead: Lead;
 }
 
 const ChatHeader: React.FC<ChatHeaderProps> = ({ lead }) => {
   return (
-    <div className="p-4 bg-gray-200 flex justify-between items-center">
-      <div className="flex items-center">
-        <div className="w-10 h-10 bg-gray-300 rounded-full mr-3"></div>
-        <h2 className="font-semibold">{lead ? lead.nombre : 'Sin conversación'}</h2>
+    <div className="p-3 bg-gray-200 flex justify-between items-center">
+      <div>
+        <h2 className="font-semibold text-lg">{lead.nombre}</h2>
+        <p className="text-xs text-gray-600">{lead.numeroWhatsapp}</p>
       </div>
       <div className="flex space-x-4">
-        <Video size={20} />
-        <Phone size={20} />
-        <MoreVertical size={20} />
+        <Video size={18} className="cursor-pointer" />
+        <Phone size={18} className="cursor-pointer" />
+        <MoreVertical size={18} className="cursor-pointer" />
       </div>
     </div>
   );
