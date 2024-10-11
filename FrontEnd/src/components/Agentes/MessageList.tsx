@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Message, Download } from './types';
 
 interface MessageListProps {
@@ -11,6 +11,15 @@ interface MessageListProps {
 
 const MessageList: React.FC<MessageListProps> = ({ messages, selectedChat, downloads, downloadFile, enpointAwsBucked }) => {
   const [audioPlaying, setAudioPlaying] = useState<{ [key: string]: boolean }>({});
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
 
   return (
     <div className="flex-1 overflow-y-auto p-4">
@@ -19,9 +28,9 @@ const MessageList: React.FC<MessageListProps> = ({ messages, selectedChat, downl
         const fileName = msg.message.split('/').pop() || 'file';
         const isDownloaded = downloads.some(download => download.url.includes(msg.message) && download.chatId === selectedChat);
         
-        const isAudio = msg.message.endsWith('.mp3') || msg.message.endsWith('.wav'); // o cualquier otra extensión de audio
+        const isAudio = msg.message.endsWith('.mp3') || msg.message.endsWith('.wav');
         const isImage = msg.message.endsWith('.jpg') || msg.message.endsWith('.jpeg') || msg.message.endsWith('.png') || msg.message.endsWith('.gif');
-        const isVideo = msg.message.endsWith('.mp4') || msg.message.endsWith('.mov'); // o cualquier otra extensión de video
+        const isVideo = msg.message.endsWith('.mp4') || msg.message.endsWith('.mov');
 
         return (
           <div key={index} className={`flex mb-2 ${msg.Cliente ? 'justify-start' : 'justify-end'}`}>
@@ -66,6 +75,7 @@ const MessageList: React.FC<MessageListProps> = ({ messages, selectedChat, downl
           </div>
         );
       })}
+      <div ref={messagesEndRef} />
     </div>
   );
 };
