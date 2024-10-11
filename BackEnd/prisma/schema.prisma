@@ -37,6 +37,7 @@ model Lead {
   nombre            String?
   numeroWhatsapp    String    @unique
   conversacion      String?   @db.Text   // Cambiar de String a Text
+  urlPhotoPerfil    String?
   idAgente          Int?      @map("id_agente")
   idTipoGestion     Int?      @map("id_tipo_gestion")
   agente            Agente?   @relation("AgenteLeads", fields: [idAgente], references: [id])

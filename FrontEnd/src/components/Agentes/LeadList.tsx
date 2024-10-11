@@ -1,5 +1,6 @@
 import React from 'react';
 import { Lead } from './types';
+import '../../css/Agentes/LeadList.css'
 
 interface LeadListProps {
   leads: Lead[];
@@ -9,17 +10,24 @@ interface LeadListProps {
 
 const LeadList: React.FC<LeadListProps> = ({ leads, selectedChat, setSelectedChat }) => {
   return (
-    <div className="overflow-y-auto h-[calc(100%-120px)]">
+    <div className="lead-list-container">
       {leads.map((lead) => (
         <div
           key={lead.id}
-          className={`flex items-center p-3 hover:bg-gray-100 cursor-pointer ${selectedChat === lead.id ? 'bg-gray-200' : ''}`}
+          className={`lead-item ${selectedChat === lead.id ? 'lead-item-selected' : ''}`}
           onClick={() => setSelectedChat(lead.id)}
         >
-          <div className="w-12 h-12 bg-gray-300 rounded-full mr-3"></div>
-          <div className="flex-1">
-            <h2 className="font-semibold">{lead.nombre}</h2>
-            <p className="text-sm text-gray-600 truncate">{lead.conversacion}</p>
+          <div className="lead-avatar">
+            <div className="lead-avatar-placeholder">
+              {lead.nombre.charAt(0).toUpperCase()}
+            </div>
+          </div>
+          <div className="lead-info">
+            <div className="lead-header">
+              <h2 className="lead-name">{lead.nombre}</h2>
+              <span className="lead-time">12:34 PM</span>
+            </div>
+            <p className="lead-last-message">{lead.conversacion}</p>
           </div>
         </div>
       ))}

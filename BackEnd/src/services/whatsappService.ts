@@ -5,6 +5,7 @@ import { PrismaClient } from '@prisma/client';
 import uploadFileToS3 from './AWS/S3/uploadS3';
 import fs from 'fs/promises';
 import dotenv from 'dotenv';
+import getAgentWithFewestLeads from './Whatsapp/agentLeadManager';
 
 dotenv.config();
 
@@ -18,30 +19,6 @@ if (!bucketName) {
 export const client = new Client({
     authStrategy: new LocalAuth(),
 });
-
-async function getAgentWithFewestLeads() {
-    const agents = await prisma.agente.findMany({
-        include: {
-            _count: {
-                select: { leads: true }
-            }
-        },
-        where: {
-            rol: 'AGENTE'
-        },
-        orderBy: {
-            leads: {
-                _count: 'asc'
-            }
-        }
-    });
-
-    if (agents.length === 0) {
-        throw new Error('No hay agentes disponibles para asignar leads');
-    }
-
-    return agents[0];
-}
 
 export const generateQRCode = () => {
     return new Promise<string>((resolve, reject) => {
