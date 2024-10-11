@@ -4,9 +4,10 @@ import { Video, Phone, MoreVertical } from 'lucide-react';
 
 interface ChatHeaderProps {
   lead: Lead;
+  onToggleSidebar: () => void;
 }
 
-const ChatHeader: React.FC<ChatHeaderProps> = ({ lead }) => {
+const ChatHeader: React.FC<ChatHeaderProps> = ({ lead, onToggleSidebar }) => {
   return (
     <div className="p-3 bg-gray-200 flex justify-between items-center">
       <div>
@@ -16,7 +17,7 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({ lead }) => {
       <div className="flex space-x-4">
         <Video size={18} className="cursor-pointer" />
         <Phone size={18} className="cursor-pointer" />
-        <MoreVertical size={18} className="cursor-pointer" />
+        <MoreVertical size={18} className="cursor-pointer" onClick={onToggleSidebar} />
       </div>
     </div>
   );

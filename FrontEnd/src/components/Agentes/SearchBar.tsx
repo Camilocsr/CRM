@@ -14,7 +14,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ searchTerm, setSearchTerm }) => {
         <Search size={20} className="searchbar-icon" />
         <input
           type="text"
-          placeholder="Search or start new chat"
+          placeholder="Busca un lead"
           className="searchbar-input"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
