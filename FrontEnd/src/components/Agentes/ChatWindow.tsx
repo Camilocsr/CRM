@@ -44,6 +44,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
           downloads={downloads}
           downloadFile={downloadFile}
           enpointAwsBucked={enpointAwsBucked}
+          profilePictureUrl={selectedLead.urlPhotoPerfil}
         />
       </div>
       <MessageSender
@@ -51,6 +52,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
         numberWhatsApp={selectedLead.numeroWhatsapp}
         nombreAgente={agente.nombre}
         enpointSenderMessage={enpointSenderMessage}
+        profilePictureUrl={selectedLead.urlPhotoPerfil}
       />
     </>
   );

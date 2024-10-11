@@ -3,6 +3,7 @@ export interface Lead {
     nombre: string;
     numeroWhatsapp: string;
     conversacion: string;
+    urlPhotoPerfil: string;
 }
 
 export interface Agente {
@@ -31,4 +32,5 @@ export interface MessageSenderProps {
     numberWhatsApp: string;
     nombreAgente: string;
     enpointSenderMessage: string;
+    profilePictureUrl: string;
 }

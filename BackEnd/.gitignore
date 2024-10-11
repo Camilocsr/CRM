@@ -9,7 +9,8 @@ public/*
 uploads/*
 !uploads/.gitkeep
 
-
+temp/*
+!temp/.gitkeep
 
 src/services/uploads/*
 !src/services/uploads/.gitkeep

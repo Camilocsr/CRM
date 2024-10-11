@@ -18,9 +18,13 @@ const LeadList: React.FC<LeadListProps> = ({ leads, selectedChat, setSelectedCha
           onClick={() => setSelectedChat(lead.id)}
         >
           <div className="lead-avatar">
-            <div className="lead-avatar-placeholder">
-              {lead.nombre.charAt(0).toUpperCase()}
-            </div>
+            {lead.urlPhotoPerfil ? (
+              <img src={lead.urlPhotoPerfil} alt={lead.nombre} className="lead-avatar-img" />
+            ) : (
+              <div className="lead-avatar-placeholder">
+                {lead.nombre.charAt(0).toUpperCase()}
+              </div>
+            )}
           </div>
           <div className="lead-info">
             <div className="lead-header">

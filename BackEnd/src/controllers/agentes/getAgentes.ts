@@ -27,7 +27,8 @@ export const getAgenteWithLeads = async (req: Request, res: Response, next: Next
                 numeroWhatsapp: lead.numeroWhatsapp,
                 conversacion: lead.conversacion,
                 idAgente: lead.idAgente,
-                TipoGestion: lead.tipoGestion ? lead.tipoGestion.tipoGestion : null
+                TipoGestion: lead.tipoGestion ? lead.tipoGestion.tipoGestion : null,
+                urlPhotoPerfil: (lead as any).urlPhotoPerfil
             }));
 
             res.status(200).json({

@@ -3,13 +3,21 @@ import { Message, Download } from './types';
 
 interface MessageListProps {
   messages: Message[];
-  selectedChat: number | null;
+  selectedChat: number;
   downloads: Download[];
   downloadFile: (url: string, fileName: string, chatId: number) => Promise<void>;
   enpointAwsBucked: string;
+  profilePictureUrl: string | null;
 }
 
-const MessageList: React.FC<MessageListProps> = ({ messages, selectedChat, downloads, downloadFile, enpointAwsBucked }) => {
+const MessageList: React.FC<MessageListProps> = ({ 
+  messages, 
+  selectedChat, 
+  downloads, 
+  downloadFile, 
+  enpointAwsBucked,
+  profilePictureUrl 
+}) => {
   const [audioPlaying, setAudioPlaying] = useState<{ [key: string]: boolean }>({});
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -34,6 +42,15 @@ const MessageList: React.FC<MessageListProps> = ({ messages, selectedChat, downl
 
         return (
           <div key={index} className={`flex mb-2 ${msg.Cliente ? 'justify-start' : 'justify-end'}`}>
+            {msg.Cliente && (
+              <div className="mr-2">
+                {profilePictureUrl ? (
+                  <img src={profilePictureUrl} alt="Profile" className="w-8 h-8 rounded-full" />
+                ) : (
+                  <div className="w-8 h-8 bg-gray-300 rounded-full"></div>
+                )}
+              </div>
+            )}
             <div className={`message ${msg.Cliente ? 'cliente' : 'agente'}`}>
               {isFileUrl ? (
                 isAudio ? (

@@ -6,6 +6,8 @@ import uploadFileToS3 from './AWS/S3/uploadS3';
 import fs from 'fs/promises';
 import dotenv from 'dotenv';
 import getAgentWithFewestLeads from './Whatsapp/agentLeadManager';
+import { getAndSaveProfilePicture } from './Whatsapp/getAndSaveProfilePicture';
+import { deleteFile } from '../utils/deleteFile';
 
 dotenv.config();
 
@@ -51,6 +53,22 @@ export const generateQRCode = () => {
 
             console.log(`Nombre del contacto: ${contactName}`);
 
+            const profileImagePath = await getAndSaveProfilePicture(contact);
+            let profileImageS3Url = null;
+
+            if (profileImagePath) {
+                profileImageS3Url = await uploadFileToS3(bucketName, profileImagePath);
+                console.log(`Imagen de perfil subida a S3: ${profileImageS3Url}`);
+
+                try {
+                    await deleteFile(profileImagePath);
+                } catch (error) {
+                    console.error('Error al eliminar el archivo local de imagen de perfil:', error);
+                }
+            }
+
+            console.log(`esta es la ruta a la foto de perfil ${profileImageS3Url}`);
+
             const existingLead = await prisma.lead.findUnique({
                 where: {
                     numeroWhatsapp: contactNumber,
@@ -61,24 +79,24 @@ export const generateQRCode = () => {
 
             const handleMediaMessage = async (media: MessageMedia) => {
                 const buffer = Buffer.from(media.data, 'base64');
-                
+
                 const fileType = media.mimetype.split('/');
                 const fileExtension = fileType[1];
                 const newFileName = `${Date.now()}.${fileExtension}`;
                 const filePath = path.join(__dirname, '../../uploads', newFileName);
-                
+
                 await fs.writeFile(filePath, buffer);
                 console.log('Archivo guardado en:', filePath);
-            
+
                 const s3Url = await uploadFileToS3(bucketName, filePath);
-                
+
                 try {
-                    await fs.unlink(filePath);
+                    await deleteFile(filePath);
                     console.log('Archivo local eliminado:', filePath);
                 } catch (error) {
                     console.error('Error al eliminar el archivo local:', error);
                 }
-                
+
                 return s3Url;
             };
 
@@ -115,12 +133,12 @@ export const generateQRCode = () => {
                         conversacion: JSON.stringify(conversation),
                         idTipoGestion: tipoGestionNoGestionado.id,
                         idAgente: assignedAgent.id,
-                    },
+                        urlPhotoPerfil: profileImageS3Url,
+                    } as any,
                 });
                 console.log(`Nuevo lead creado y asignado al agente ${assignedAgent.nombre}: ${JSON.stringify(newLead)}`);
                 message.reply('¡Gracias! Tu información ha sido registrada y un agente te atenderá pronto.');
             } else {
-
                 try {
                     conversation = existingLead.conversacion ? JSON.parse(existingLead.conversacion) : [];
                 } catch (error) {
@@ -140,7 +158,10 @@ export const generateQRCode = () => {
 
                 await prisma.lead.update({
                     where: { id: existingLead.id! },
-                    data: { conversacion: JSON.stringify(conversation) },
+                    data: { 
+                        conversacion: JSON.stringify(conversation),
+                        urlPhotoPerfil: profileImageS3Url,
+                    } as any,
                 });
             }
         });
