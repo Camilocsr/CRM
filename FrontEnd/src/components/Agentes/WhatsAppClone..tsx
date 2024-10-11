@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import Split from 'react-split';
-import '../../css/whatsappClone.css';
+import '../../css/Agentes/whatsappClone.css';
 import { Agente, Message, Download } from './types';
 import LeadList from './LeadList';
 import ChatWindow from './ChatWindow';
 import WebSocketHandler from './WebSocketHandler';
-import SearchBar from './SearchBar'; // Importamos el nuevo componente SearchBar
+import SearchBar from './SearchBar';
 
 // Enpoints
 const enpointAwsBucked = import.meta.env.VITE_ENPOINT_AWS_BUCKED;
@@ -64,7 +64,6 @@ const WhatsAppClone: React.FC = () => {
     }
   };
 
-  // Filtrar los leads según el término de búsqueda
   const filteredLeads = agente?.leads.filter(lead => {
     const lowerCaseSearchTerm = searchTerm.toLowerCase();
     return (

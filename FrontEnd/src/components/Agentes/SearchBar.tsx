@@ -1,5 +1,6 @@
 import React from 'react';
 import { Search } from 'lucide-react';
+import '../../css/Agentes/SearchBar.css'
 
 interface SearchBarProps {
   searchTerm: string;
@@ -8,13 +9,13 @@ interface SearchBarProps {
 
 const SearchBar: React.FC<SearchBarProps> = ({ searchTerm, setSearchTerm }) => {
   return (
-    <div className="p-2">
-      <div className="flex items-center bg-gray-100 rounded-full px-3 py-1">
-        <Search size={20} className="text-gray-500" />
+    <div className="searchbar-container">
+      <div className="searchbar-wrapper">
+        <Search size={20} className="searchbar-icon" />
         <input
           type="text"
           placeholder="Search or start new chat"
-          className="bg-transparent ml-2 outline-none flex-1"
+          className="searchbar-input"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
