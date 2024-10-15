@@ -13,13 +13,12 @@ const getLastMessageTime = (conversation: string): Date => {
     const parsedConversation = JSON.parse(conversation) || [];
     const lastMessage = parsedConversation[parsedConversation.length - 1];
     if (lastMessage && lastMessage.timestamp) {
-      // Parse the timestamp directly
-      return new Date(lastMessage.timestamp); // Esto devuelve un objeto Date
+      return new Date(lastMessage.timestamp);
     }
-    return new Date(0); // Devuelve la fecha de "epoca" si no hay mensajes
+    return new Date(0);
   } catch (error) {
     console.error('Error al parsear la conversación:', error);
-    return new Date(0); // Devuelve la fecha de "epoca" en caso de error
+    return new Date(0);
   }
 };
 

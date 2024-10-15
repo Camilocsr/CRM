@@ -5,6 +5,8 @@
 
 .h-screen {
     height: 100vh;
+    overflow: hidden;
+    /* Evita el scroll en el contenedor principal */
 }
 
 .bg-gray-100 {
@@ -212,12 +214,16 @@
     justify-content: center;
 }
 
-.text-xl {
-    font-size: 1.25rem;
-}
-
 .text-gray-500 {
     color: #a0aec0;
+}
+
+/* Split container and gutter */
+.split {
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+    width: 100%;
 }
 
 .gutter {
@@ -229,15 +235,79 @@
 .gutter.gutter-horizontal {
     background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAeCAYAAADkftS9AAAAIklEQVQoU2M4c+bMfxAGAgYYmwGrIIiDjrELjpo5aiZeMwF+yNnOs5KSvgAAAABJRU5ErkJggg==');
     cursor: col-resize;
+    width: 10px !important;
 }
 
-/* Ensure the split container takes full height */
-.split {
-    display: flex;
-    flex-direction: row;
+/* Ajustes para quitar el scroll de la derecha */
+.flex-1.flex.flex-col.overflow-hidden {
+    overflow: hidden;
 }
 
-/* Ensure both panels can scroll independently */
-.split>div {
+.flex-1.overflow-y-auto {
     overflow-y: auto;
+    height: calc(100vh - 120px);
+}
+
+.bg-gray-100.p-4 {
+    position: sticky;
+    bottom: 0;
+    background-color: #f7fafc;
+}
+
+/* Ajustes para el panel izquierdo */
+.bg-white.border-r.overflow-hidden {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+.overflow-y-auto.h-[calc(100% - 120px)] {
+    flex-grow: 1;
+    overflow-y: auto;
+}
+
+/* Media queries para responsividad */
+@media (max-width: 768px) {
+    .split {
+        flex-direction: column;
+    }
+
+    .split>div:first-child,
+    .split>div:last-child {
+        width: 100%;
+        max-width: none;
+        height: 50vh;
+    }
+
+    .gutter-horizontal {
+        display: none;
+    }
+
+    .flex-1.overflow-y-auto {
+        height: calc(50vh - 60px);
+    }
+}
+
+@media (max-width: 640px) {
+    .h-screen {
+        min-height: 100vh;
+    }
+
+    .p-4 {
+        padding: 0.5rem;
+    }
+
+    .text-xl {
+        font-size: 1rem;
+    }
+
+    .w-12,
+    .h-12 {
+        width: 2.5rem;
+        height: 2.5rem;
+    }
+
+    .message {
+        max-width: 85%;
+    }
 }
