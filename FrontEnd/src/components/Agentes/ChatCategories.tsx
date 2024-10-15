@@ -1,7 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { 
-  MessageCircle, Users, Star, Clock, 
-  Bookmark, UserPlus, Phone
+  MessageCircle,
+  Users,
+  Bug,
+  Phone,
+  CheckCircle,
+  UserPlus,
+  Clock
 } from 'lucide-react';
 import '../../css/Agentes/ChatCategories.css';
 
@@ -13,11 +18,10 @@ interface ChatCategory {
 const categories: ChatCategory[] = [
   { icon: <MessageCircle size={20} />, label: 'Sin gestionar' },
   { icon: <Users size={20} />, label: 'Conversacion' },
-  { icon: <Star size={20} />, label: 'Depuracion' },
+  { icon: <Bug size={20} />, label: 'Depuracion' },
   { icon: <Phone size={20} />, label: 'Llamadas' },
-  { icon: <Phone size={20} />, label: 'Segunda Llamada' },
-  { icon: <Clock size={20} />, label: 'Depuracion' },
-  { icon: <Bookmark size={20} />, label: 'Inscrito' },
+  { icon: <Clock size={20} />, label: 'Segunda Llamada' },
+  { icon: <CheckCircle size={20} />, label: 'Inscrito' },
   { icon: <UserPlus size={20} />, label: 'Venta Perdida' },
 ];
 
