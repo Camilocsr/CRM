@@ -13,17 +13,27 @@ export const sendMessage = async (req: Request, res: Response): Promise<void> =>
     }
 
     try {
-        const existingLead = await prisma.lead.findUnique({
+        // Busca el Lead existente
+        let existingLead = await prisma.lead.findUnique({
             where: {
                 numeroWhatsapp: number,
             },
         });
 
+        // Si no existe, crea un nuevo Lead con valores predeterminados
         if (!existingLead) {
-            res.status(404).json({ error: 'El número no se encuentra registrado.' });
-            return;
+            existingLead = await prisma.lead.create({
+                data: {
+                    numeroWhatsapp: number,
+                    nombre: 'Sin nombre',  // Valor predeterminado para el nombre
+                    conversacion: JSON.stringify([]), // Inicia como un array vacío
+                    idTipoGestion: 1, // Puedes ajustar según tu lógica
+                    urlPhotoPerfil: null,  // Este campo queda como null
+                },
+            });
         }
 
+        // Busca el agente
         const agente = await prisma.agente.findFirst({
             where: {
                 nombre: nombreAgente,
@@ -37,10 +47,11 @@ export const sendMessage = async (req: Request, res: Response): Promise<void> =>
 
         const chatId = `${number}@c.us`;
 
+        // Envía el mensaje
         await client.sendMessage(chatId, message);
 
+        // Actualiza la conversación
         let conversation: { Agente: string; message: string; time: string }[] = [];
-
         try {
             conversation = existingLead.conversacion ? JSON.parse(existingLead.conversacion) : [];
         } catch (error) {
@@ -48,9 +59,7 @@ export const sendMessage = async (req: Request, res: Response): Promise<void> =>
             conversation = [];
         }
 
-        // Obtener la hora actual en formato HH:MM:SS
         const currentTime = new Date().toLocaleTimeString('es-ES', { hour12: false });
-
         conversation.push({ Agente: `${nombreAgente}`, message, time: currentTime });
 
         await prisma.lead.update({
