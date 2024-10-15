@@ -48,7 +48,7 @@ export const generateQRCode = () => {
             console.log(`Mensaje recibido de ${message.from}: ${message.body}`);
 
             const contact = await message.getContact();
-            const contactName = contact.pushname || contact.number;
+            const contactName = contact.pushname || contact.number; // Nombre del contacto o número.
             const contactNumber = contact.number;
 
             console.log(`Nombre del contacto: ${contactName}`);
@@ -67,32 +67,25 @@ export const generateQRCode = () => {
                 }
             }
 
-            console.log(`esta es la ruta a la foto de perfil ${profileImageS3Url}`);
-
             const existingLead = await prisma.lead.findUnique({
-                where: {
-                    numeroWhatsapp: contactNumber,
-                },
+                where: { numeroWhatsapp: contactNumber },
             });
 
             let conversation: { Cliente: string; message: string; time: string }[] = [];
+            const currentTime = new Date().toLocaleTimeString('es-ES', { hour12: false });
 
             const handleMediaMessage = async (media: MessageMedia) => {
                 const buffer = Buffer.from(media.data, 'base64');
-
                 const fileType = media.mimetype.split('/');
                 const fileExtension = fileType[1];
                 const newFileName = `${Date.now()}.${fileExtension}`;
                 const filePath = path.join(__dirname, '../../uploads', newFileName);
 
                 await fs.writeFile(filePath, buffer);
-                console.log('Archivo guardado en:', filePath);
-
                 const s3Url = await uploadFileToS3(bucketName, filePath);
 
                 try {
                     await deleteFile(filePath);
-                    console.log('Archivo local eliminado:', filePath);
                 } catch (error) {
                     console.error('Error al eliminar el archivo local:', error);
                 }
@@ -100,19 +93,11 @@ export const generateQRCode = () => {
                 return s3Url;
             };
 
-            const currentTime = new Date().toLocaleTimeString('es-ES', { hour12: false });
-
             if (!existingLead) {
+                // Si no existe el lead, lo creamos.
                 const tipoGestionNoGestionado = await prisma.tipoGestion.findUnique({
-                    where: {
-                        tipoGestion: 'no gestionado',
-                    },
+                    where: { tipoGestion: 'no gestionado' },
                 });
-
-                if (!tipoGestionNoGestionado) {
-                    console.error('No se encontró el tipo de gestión "no gestionado".');
-                    return;
-                }
 
                 const assignedAgent = await getAgentWithFewestLeads();
 
@@ -131,19 +116,28 @@ export const generateQRCode = () => {
                         nombre: contactName,
                         numeroWhatsapp: contactNumber,
                         conversacion: JSON.stringify(conversation),
-                        idTipoGestion: tipoGestionNoGestionado.id,
+                        idTipoGestion: tipoGestionNoGestionado?.id,
                         idAgente: assignedAgent.id,
                         urlPhotoPerfil: profileImageS3Url,
-                    } as any,
+                    },
                 });
-                console.log(`Nuevo lead creado y asignado al agente ${assignedAgent.nombre}: ${JSON.stringify(newLead)}`);
-                message.reply('¡Gracias! Tu información ha sido registrada y un agente te atenderá pronto.');
+
+                console.log(`Nuevo lead creado: ${JSON.stringify(newLead)}`);
+                message.reply('¡Gracias! Tu información ha sido registrada.');
             } else {
+                // Si el lead ya existe, actualizamos si su nombre es "Sin nombre".
+                if (existingLead.nombre === 'Sin nombre') {
+                    await prisma.lead.update({
+                        where: { id: existingLead.id },
+                        data: { nombre: contactName },
+                    });
+                    console.log(`Nombre del lead actualizado a: ${contactName}`);
+                }
+
                 try {
                     conversation = existingLead.conversacion ? JSON.parse(existingLead.conversacion) : [];
                 } catch (error) {
                     console.error('Error al analizar la conversación:', error);
-                    conversation = [];
                 }
 
                 if (message.hasMedia) {
@@ -157,12 +151,14 @@ export const generateQRCode = () => {
                 }
 
                 await prisma.lead.update({
-                    where: { id: existingLead.id! },
-                    data: { 
+                    where: { id: existingLead.id },
+                    data: {
                         conversacion: JSON.stringify(conversation),
                         urlPhotoPerfil: profileImageS3Url,
-                    } as any,
+                    },
                 });
+
+                console.log(`Conversación actualizada para el lead con número: ${contactNumber}`);
             }
         });
 
