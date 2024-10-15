@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import { io, Socket } from 'socket.io-client';
 
 interface Conversacion {
   sender: string;
@@ -17,32 +18,36 @@ interface WebSocketHandlerProps {
 }
 
 const WebSocketHandler: React.FC<WebSocketHandlerProps> = ({ url, onMessage }) => {
-  const ws = useRef<WebSocket | null>(null);
+  const socketRef = useRef<Socket | null>(null);
 
   useEffect(() => {
-    ws.current = new WebSocket(url);
+    console.log(`Connecting to Socket.IO server at: ${url}`);
+    socketRef.current = io(url, {
+      reconnectionAttempts: 5,
+      reconnectionDelay: 1000,
+      transports: ['websocket']
+    });
 
-    ws.current.onopen = () => {
-      console.log('WebSocket connection established');
-    };
+    socketRef.current.on('connect', () => {
+      console.log('Socket.IO connection established');
+    });
 
-    ws.current.onmessage = (event) => {
-      const data: WebSocketMessage = JSON.parse(event.data);
+    socketRef.current.on('leadUpdate', (data: WebSocketMessage) => {
       console.log('Mensaje recibido del servidor:', data);
       onMessage(data);
-    };
+    });
 
-    ws.current.onerror = (error) => {
-      console.error('WebSocket error:', error);
-    };
+    socketRef.current.on('connect_error', (error) => {
+      console.error('Socket.IO connection error:', error);
+    });
 
-    ws.current.onclose = () => {
-      console.log('WebSocket connection closed');
-    };
+    socketRef.current.on('disconnect', (reason) => {
+      console.log('Socket.IO disconnected:', reason);
+    });
 
     return () => {
-      if (ws.current) {
-        ws.current.close();
+      if (socketRef.current) {
+        socketRef.current.disconnect();
       }
     };
   }, [url, onMessage]);

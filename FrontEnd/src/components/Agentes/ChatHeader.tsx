@@ -1,6 +1,6 @@
 import React from 'react';
 import { Lead } from './types';
-import { Video, Phone, MoreVertical } from 'lucide-react';
+import { MoreVertical } from 'lucide-react';
 
 interface ChatHeaderProps {
   lead: Lead;
@@ -15,8 +15,8 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({ lead, onToggleSidebar }) => {
         <p className="text-xs text-gray-600">{lead.numeroWhatsapp}</p>
       </div>
       <div className="flex space-x-4">
-        <Video size={18} className="cursor-pointer" />
-        <Phone size={18} className="cursor-pointer" />
+        {/* <Video size={18} className="cursor-pointer" />
+        <Phone size={18} className="cursor-pointer" /> */}
         <MoreVertical size={18} className="cursor-pointer" onClick={onToggleSidebar} />
       </div>
     </div>

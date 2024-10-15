@@ -7,8 +7,9 @@ import LeadList from './LeadList';
 import ChatWindow from './ChatWindow';
 import WebSocketHandler from './WebSocketHandler';
 import SearchBar from './SearchBar';
+import ChatCategories from './ChatCategories';
 
-// Enpoints
+// Endpoints
 const enpointAwsBucked = import.meta.env.VITE_ENPOINT_AWS_BUCKED;
 const enpointSenderMessage = import.meta.env.VITE_ENPOINT_SENDER_MESSAGE;
 const enpointGetInfoAgentes = import.meta.env.VITE_ENPOINT_GET_INFO_AGENTES;
@@ -89,9 +90,10 @@ const WhatsAppClone: React.FC = () => {
       >
         <div className="bg-white border-r overflow-hidden">
           <div className="p-4 bg-gray-200 flex justify-between items-center">
-            <h1 className="text-xl font-semibold">iudcdesarrollo@gmail.com</h1>
+            <h1 className="text-xl font-semibold">Whatsapp Innovacion.</h1>
           </div>
           <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+          <ChatCategories/>
           <LeadList leads={filteredLeads} selectedChat={selectedChat} setSelectedChat={setSelectedChat} />
         </div>
 
