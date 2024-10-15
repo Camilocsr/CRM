@@ -48,7 +48,7 @@ export const generateQRCode = () => {
             console.log(`Mensaje recibido de ${message.from}: ${message.body}`);
 
             const contact = await message.getContact();
-            const contactName = contact.pushname || contact.number; // Nombre del contacto o número.
+            const contactName = contact.pushname || contact.number;
             const contactNumber = contact.number;
 
             console.log(`Nombre del contacto: ${contactName}`);
@@ -71,8 +71,8 @@ export const generateQRCode = () => {
                 where: { numeroWhatsapp: contactNumber },
             });
 
-            let conversation: { Cliente: string; message: string; time: string }[] = [];
-            const currentTime = new Date().toLocaleTimeString('es-ES', { hour12: false });
+            let conversation: { Cliente: string; message: string; timestamp: string }[] = [];
+            const currentTimestamp = new Date().toISOString();
 
             const handleMediaMessage = async (media: MessageMedia) => {
                 const buffer = Buffer.from(media.data, 'base64');
@@ -94,7 +94,6 @@ export const generateQRCode = () => {
             };
 
             if (!existingLead) {
-                // Si no existe el lead, lo creamos.
                 const tipoGestionNoGestionado = await prisma.tipoGestion.findUnique({
                     where: { tipoGestion: 'no gestionado' },
                 });
@@ -105,10 +104,10 @@ export const generateQRCode = () => {
                     const media = await message.downloadMedia();
                     const s3Url = await handleMediaMessage(media);
                     if (s3Url) {
-                        conversation.push({ Cliente: 'cliente', message: s3Url, time: currentTime });
+                        conversation.push({ Cliente: 'cliente', message: s3Url, timestamp: currentTimestamp });
                     }
                 } else {
-                    conversation.push({ Cliente: 'cliente', message: message.body, time: currentTime });
+                    conversation.push({ Cliente: 'cliente', message: message.body, timestamp: currentTimestamp });
                 }
 
                 const newLead = await prisma.lead.create({
@@ -125,7 +124,6 @@ export const generateQRCode = () => {
                 console.log(`Nuevo lead creado: ${JSON.stringify(newLead)}`);
                 message.reply('¡Gracias! Tu información ha sido registrada.');
             } else {
-                // Si el lead ya existe, actualizamos si su nombre es "Sin nombre".
                 if (existingLead.nombre === 'Sin nombre') {
                     await prisma.lead.update({
                         where: { id: existingLead.id },
@@ -144,10 +142,10 @@ export const generateQRCode = () => {
                     const media = await message.downloadMedia();
                     const s3Url = await handleMediaMessage(media);
                     if (s3Url) {
-                        conversation.push({ Cliente: 'cliente', message: s3Url, time: currentTime });
+                        conversation.push({ Cliente: 'cliente', message: s3Url, timestamp: currentTimestamp });
                     }
                 } else {
-                    conversation.push({ Cliente: 'cliente', message: message.body, time: currentTime });
+                    conversation.push({ Cliente: 'cliente', message: message.body, timestamp: currentTimestamp });
                 }
 
                 await prisma.lead.update({

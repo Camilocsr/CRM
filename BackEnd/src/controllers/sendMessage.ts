@@ -51,7 +51,7 @@ export const sendMessage = async (req: Request, res: Response): Promise<void> =>
         await client.sendMessage(chatId, message);
 
         // Actualiza la conversación
-        let conversation: { Agente: string; message: string; time: string }[] = [];
+        let conversation: { Agente: string; message: string; timestamp: string }[] = [];
         try {
             conversation = existingLead.conversacion ? JSON.parse(existingLead.conversacion) : [];
         } catch (error) {
@@ -59,9 +59,17 @@ export const sendMessage = async (req: Request, res: Response): Promise<void> =>
             conversation = [];
         }
 
-        const currentTime = new Date().toLocaleTimeString('es-ES', { hour12: false });
-        conversation.push({ Agente: `${nombreAgente}`, message, time: currentTime });
+        // Obtiene la fecha y hora actuales en el formato requerido
+        const currentTimestamp = new Date().toISOString(); // Esto devuelve el formato ISO 8601 (YYYY-MM-DDTHH:mm:ss.sssZ)
 
+        // Agrega el mensaje del agente a la conversación
+        conversation.push({ 
+            Agente: `${nombreAgente}`, 
+            message, 
+            timestamp: currentTimestamp // Usar timestamp en lugar de time
+        });
+
+        // Actualiza el lead en la base de datos
         await prisma.lead.update({
             where: { id: existingLead.id! },
             data: {
