@@ -33,7 +33,6 @@ export const updateLead = async (req: Request, res: Response): Promise<void> => 
       const imageUrl = await uploadFileToS3(bucketName, urlPhotoPerfil);
       updateData.urlPhotoPerfil = imageUrl;
 
-      // eliminamos la imagen que queda localmente despus de la actualizacion en la base de datos.
       await deleteFile(urlPhotoPerfil);
 
     }
