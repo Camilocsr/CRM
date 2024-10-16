@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Agente, Message, Download } from './types';
 import ChatHeader from './ChatHeader';
 import MessageList from './MessageList';
 import MessageSender from './MessageSender';
+import LeadSidebar from './LeadSidebar';
 
 interface ChatWindowProps {
   selectedChat: number | null;
@@ -21,6 +22,13 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
   enpointAwsBucked,
   enpointSenderMessage,
 }) => {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  const toggleSidebar = () => {
+    console.log('Se hizo clic en los tres puntos');
+    setIsSidebarOpen((prev) => !prev);
+  };
+
   if (!selectedChat || !agente) {
     return (
       <div className="flex-1 flex items-center justify-center bg-gray-100">
@@ -36,7 +44,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
 
   return (
     <>
-      <ChatHeader lead={selectedLead} />
+      <ChatHeader lead={selectedLead} onToggleSidebar={toggleSidebar} />
       <div className="flex-1 overflow-y-auto p-4 flex flex-col">
         <MessageList
           messages={messages}
@@ -54,6 +62,10 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
         enpointSenderMessage={enpointSenderMessage}
         profilePictureUrl={selectedLead.urlPhotoPerfil}
       />
+
+      {isSidebarOpen && (
+        <LeadSidebar lead={selectedLead} />
+      )}
     </>
   );
 };

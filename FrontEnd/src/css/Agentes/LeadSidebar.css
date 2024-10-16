@@ -1,0 +1,96 @@
+.lead-sidebar {
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    width: 280px;
+    font-family: Arial, sans-serif;
+}
+
+.lead-info {
+    display: flex;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.lead-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: #e0e0e0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 16px;
+    font-weight: bold;
+    font-size: 24px;
+    color: #555555;
+}
+
+.lead-info h2 {
+    margin: 0;
+    font-size: 20px;
+    color: #333333;
+}
+
+.lead-info p {
+    margin: 4px 0;
+    color: #777777;
+}
+
+.lead-actions {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 24px;
+}
+
+.action-btn {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 10px 12px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    font-size: 16px;
+    width: 40px;
+}
+
+.action-btn:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+}
+
+.conversation-actions {
+    margin-top: 24px;
+}
+
+.action-item {
+    margin-bottom: 16px;
+}
+
+.action-item label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: bold;
+    color: #333333;
+}
+
+.action-item select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #cccccc;
+    border-radius: 4px;
+    background-color: #f9f9f9;
+    font-size: 14px;
+    color: #333333;
+}
+
+.action-item select:hover {
+    border-color: #007bff;
+}
+
+.action-item select[multiple] {
+    height: 100px; /* Ajusta la altura para mostrar varias opciones */
+}

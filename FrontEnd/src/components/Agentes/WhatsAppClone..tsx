@@ -6,10 +6,10 @@ import WebSocketHandler from './WebSocketHandler';
 import ChatInterface from './ChatInterface';
 
 // Endpoints
-const enpointAwsBucked = import.meta.env.VITE_ENPOINT_AWS_BUCKED;
-const enpointSenderMessage = import.meta.env.VITE_ENPOINT_SENDER_MESSAGE;
-const enpointGetInfoAgentes = import.meta.env.VITE_ENPOINT_GET_INFO_AGENTES;
-const websocketUrl = import.meta.env.VITE_WEBSOCKET_URL;
+const enpointAwsBucked = import.meta.env.VITE_ENPOINT_AWS_BUCKED; // Donde se guardan todas las imagenes en la nube.
+const enpointSenderMessage = import.meta.env.VITE_ENPOINT_SENDER_MESSAGE; // enponit del server para enviar mensajes a el cliente
+const enpointGetInfoAgentes = import.meta.env.VITE_ENPOINT_GET_INFO_AGENTES; // Informacion relacionada con el Agente
+const websocketUrl = import.meta.env.VITE_WEBSOCKET_URL; // Epoint del server socked para la mensageriia
 
 interface WebSocketMessage {
   numero: string;

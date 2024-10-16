@@ -15,8 +15,6 @@ const ChatHeader: React.FC<ChatHeaderProps> = ({ lead, onToggleSidebar }) => {
         <p className="text-xs text-gray-600">{lead.numeroWhatsapp}</p>
       </div>
       <div className="flex space-x-4">
-        {/* <Video size={18} className="cursor-pointer" />
-        <Phone size={18} className="cursor-pointer" /> */}
         <MoreVertical size={18} className="cursor-pointer" onClick={onToggleSidebar} />
       </div>
     </div>
