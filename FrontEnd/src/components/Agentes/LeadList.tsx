@@ -23,7 +23,27 @@ const getLastMessageTime = (conversation: string): Date => {
 };
 
 const formatTime = (date: Date): string => {
-  return date.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', hour12: true });
+  return date.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', hour12: false });
+};
+
+const countUnreadMessages = (conversation: string): number => {
+  try {
+    const parsedConversation = JSON.parse(conversation) || [];
+    let count = 0;
+    
+    for (let i = parsedConversation.length - 1; i >= 0; i--) {
+      if (parsedConversation[i].Cliente) {
+        count++;
+      } else if (parsedConversation[i].Agente) {
+        break;
+      }
+    }
+
+    return count;
+  } catch (error) {
+    console.error('Error al contar mensajes no leídos:', error);
+    return 0;
+  }
 };
 
 const LeadList: React.FC<LeadListProps> = ({ leads, selectedChat, setSelectedChat }) => {
@@ -37,32 +57,38 @@ const LeadList: React.FC<LeadListProps> = ({ leads, selectedChat, setSelectedCha
 
   return (
     <div className="lead-list-container">
-      {sortedLeads.map((lead) => (
-        <div
-          key={lead.id}
-          className={`lead-item ${selectedChat === lead.id ? 'lead-item-selected' : ''}`}
-          onClick={() => setSelectedChat(lead.id)}
-        >
-          <div className="lead-avatar">
-            {lead.urlPhotoPerfil ? (
-              <img src={lead.urlPhotoPerfil} alt={lead.nombre} className="lead-avatar-img" />
-            ) : (
-              <div className="lead-avatar-placeholder">
-                {lead.nombre.charAt(0).toUpperCase()}
-              </div>
-            )}
-          </div>
-          <div className="lead-info">
-            <div className="lead-header">
-              <h2 className="lead-name">{lead.nombre}</h2>
-              <span className="lead-time">{formatTime(getLastMessageTime(lead.conversacion))}</span>
+      {sortedLeads.map((lead) => {
+        const unreadCount = countUnreadMessages(lead.conversacion);
+        return (
+          <div
+            key={lead.id}
+            className={`lead-item ${selectedChat === lead.id ? 'lead-item-selected' : ''}`}
+            onClick={() => setSelectedChat(lead.id)}
+          >
+            <div className="lead-avatar">
+              {lead.urlPhotoPerfil ? (
+                <img src={lead.urlPhotoPerfil} alt={lead.nombre} className="lead-avatar-img" />
+              ) : (
+                lead.nombre.charAt(0).toUpperCase()
+              )}
             </div>
-            <p className="lead-last-message">
-              {JSON.parse(lead.conversacion)?.slice(-1)[0]?.message || 'Sin mensajes'}
-            </p>
+            <div className="lead-info">
+              <div className="lead-main-info">
+                <h2 className="lead-name">{lead.nombre}</h2>
+                <p className="lead-last-message">
+                  {JSON.parse(lead.conversacion)?.slice(-1)[0]?.message || 'Sin mensajes'}
+                </p>
+              </div>
+              <div className="lead-meta">
+                <span className="lead-time">{formatTime(getLastMessageTime(lead.conversacion))}</span>
+                {unreadCount > 0 && (
+                  <span className="unread-count">{unreadCount}</span>
+                )}
+              </div>
+            </div>
           </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 };
