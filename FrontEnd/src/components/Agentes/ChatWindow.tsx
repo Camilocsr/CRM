@@ -43,30 +43,33 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
   const messages: Message[] = JSON.parse(selectedLead.conversacion);
 
   return (
-    <>
-      <ChatHeader lead={selectedLead} onToggleSidebar={toggleSidebar} />
-      <div className="flex-1 overflow-y-auto p-4 flex flex-col">
-        <MessageList
-          messages={messages}
+    <div className="flex flex-row h-full">
+      <div className="flex-1 flex flex-col">
+        <ChatHeader lead={selectedLead} onToggleSidebar={toggleSidebar} />
+        <div className="flex-1 overflow-y-auto p-4 flex flex-col">
+          <MessageList
+            messages={messages}
+            selectedChat={selectedChat}
+            downloads={downloads}
+            downloadFile={downloadFile}
+            enpointAwsBucked={enpointAwsBucked}
+            profilePictureUrl={selectedLead.urlPhotoPerfil}
+          />
+        </div>
+        <MessageSender
           selectedChat={selectedChat}
-          downloads={downloads}
-          downloadFile={downloadFile}
-          enpointAwsBucked={enpointAwsBucked}
+          numberWhatsApp={selectedLead.numeroWhatsapp}
+          nombreAgente={agente.nombre}
+          enpointSenderMessage={enpointSenderMessage}
           profilePictureUrl={selectedLead.urlPhotoPerfil}
         />
       </div>
-      <MessageSender
-        selectedChat={selectedChat}
-        numberWhatsApp={selectedLead.numeroWhatsapp}
-        nombreAgente={agente.nombre}
-        enpointSenderMessage={enpointSenderMessage}
-        profilePictureUrl={selectedLead.urlPhotoPerfil}
-      />
-
       {isSidebarOpen && (
-        <LeadSidebar lead={selectedLead} />
+        <div className="lead-sidebar-container">
+          <LeadSidebar lead={selectedLead} />
+        </div>
       )}
-    </>
+    </div>
   );
 };
 

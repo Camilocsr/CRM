@@ -71,10 +71,8 @@ const LeadSidebar: React.FC<LeadSidebarProps> = ({ lead }) => {
       </div>
       <div className="lead-actions">
         <button className="action-btn edit" onClick={handleEditClick}>✏️</button>
-        <button className="action-btn delete">🗑️</button>
       </div>
       <div className="conversation-actions">
-        <h3>Acciones de conversación</h3>
         <div className="action-item">
           <label>Tipo de gestión</label>
           <select>

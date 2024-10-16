@@ -42,7 +42,7 @@ const MessageSender: React.FC<MessageSenderProps> = ({
                 placeholder="Escribe un mensaje"
                 value={messageText}
                 onChange={(e) => setMessageText(e.target.value)}
-                onKeyPress={handleKeyPress} // Escucha el evento de tecla
+                onKeyPress={handleKeyPress}
                 className="w-full p-2 rounded-full border border-gray-300 focus:outline-none focus:border-blue-500"
             />
             <button
