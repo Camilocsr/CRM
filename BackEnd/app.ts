@@ -6,6 +6,7 @@ import { createServer } from 'http';
 import { Server } from 'socket.io';
 import whatsappRoutes from './src/routes/whatsappRoutes.routes';
 import whatsappRoutesAgentes from './src/routes/agentes/whatsappRoutesAgentes.routes';
+import leadsWhatsapp from './src/routes/leads/leadsWhatsapp.routes';
 import routesAuth from './src/auth/routes/auth.routes';
 import './src/auth/config/passport-setup';
 import watchLeadChanges from './src/middleware/watchLeadChanges';
@@ -63,6 +64,7 @@ app.use(express.json());
 app.use('/api', routesAuth);
 app.use('/api/whatsapp', whatsappRoutes);
 app.use('/api/', whatsappRoutesAgentes);
+app.use('/api/', leadsWhatsapp);
 
 // Configuración de Socket.IO
 io.on('connection', (socket) => {
