@@ -4,6 +4,7 @@ export interface Lead {
     numeroWhatsapp: string;
     conversacion: string;
     urlPhotoPerfil: string;
+    TipoGestion: string;
 }
 
 export interface Agente {
@@ -33,4 +34,9 @@ export interface MessageSenderProps {
     nombreAgente: string;
     enpointSenderMessage: string;
     profilePictureUrl: string;
+}
+
+export interface ChatCategory {
+    icon: React.ReactNode;
+    label: string;
 }

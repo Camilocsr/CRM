@@ -13,27 +13,34 @@ export const sendMessage = async (req: Request, res: Response): Promise<void> =>
     }
 
     try {
-        // Busca el Lead existente
         let existingLead = await prisma.lead.findUnique({
             where: {
                 numeroWhatsapp: number,
             },
+            include: {
+                tipoGestion: true
+            }
         });
 
-        // Si no existe, crea un nuevo Lead con valores predeterminados
         if (!existingLead) {
+            const tipoGestionNoGestionado = await prisma.tipoGestion.findFirst({
+                where: { tipoGestion: 'no gestionado' }
+            });
+
             existingLead = await prisma.lead.create({
                 data: {
                     numeroWhatsapp: number,
-                    nombre: 'Sin nombre',  // Valor predeterminado para el nombre
-                    conversacion: JSON.stringify([]), // Inicia como un array vacío
-                    idTipoGestion: 1, // Puedes ajustar según tu lógica
-                    urlPhotoPerfil: null,  // Este campo queda como null
+                    nombre: 'Sin nombre',
+                    conversacion: JSON.stringify([]),
+                    idTipoGestion: tipoGestionNoGestionado?.id ?? null,
+                    urlPhotoPerfil: null,
                 },
+                include: {
+                    tipoGestion: true
+                }
             });
         }
 
-        // Busca el agente
         const agente = await prisma.agente.findFirst({
             where: {
                 nombre: nombreAgente,
@@ -47,10 +54,8 @@ export const sendMessage = async (req: Request, res: Response): Promise<void> =>
 
         const chatId = `${number}@c.us`;
 
-        // Envía el mensaje
         await client.sendMessage(chatId, message);
 
-        // Actualiza la conversación
         let conversation: { Agente: string; message: string; timestamp: string }[] = [];
         try {
             conversation = existingLead.conversacion ? JSON.parse(existingLead.conversacion) : [];
@@ -59,26 +64,35 @@ export const sendMessage = async (req: Request, res: Response): Promise<void> =>
             conversation = [];
         }
 
-        // Obtiene la fecha y hora actuales en el formato requerido
-        const currentTimestamp = new Date().toISOString(); // Esto devuelve el formato ISO 8601 (YYYY-MM-DDTHH:mm:ss.sssZ)
+        const currentTimestamp = new Date().toISOString();
 
-        // Agrega el mensaje del agente a la conversación
-        conversation.push({ 
-            Agente: `${nombreAgente}`, 
-            message, 
-            timestamp: currentTimestamp // Usar timestamp en lugar de time
+        conversation.push({
+            Agente: `${nombreAgente}`,
+            message,
+            timestamp: currentTimestamp
         });
 
-        // Actualiza el lead en la base de datos
+        let updatedTipoGestionId: number | null = existingLead.idTipoGestion;
+        if (existingLead.tipoGestion?.tipoGestion === 'no gestionado') {
+            const tipoGestionGestionado = await prisma.tipoGestion.findFirst({
+                where: { tipoGestion: 'gestionado' }
+            });
+            updatedTipoGestionId = tipoGestionGestionado?.id ?? null;
+        }
+
         await prisma.lead.update({
             where: { id: existingLead.id! },
             data: {
                 conversacion: JSON.stringify(conversation),
                 idAgente: agente.id,
+                idTipoGestion: updatedTipoGestionId
             },
         });
 
-        res.status(200).json({ success: true, message: 'Mensaje enviado correctamente y conversación actualizada.' });
+        res.status(200).json({
+            success: true,
+            message: 'Mensaje enviado correctamente, conversación actualizada y tipo de gestión verificado.'
+        });
     } catch (error) {
         console.error('Error al enviar el mensaje:', error);
         res.status(500).json({ error: 'Error al enviar el mensaje.' });

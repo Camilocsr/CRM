@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { ChatCategory } from './types';
 import { 
   MessageCircle,
   Users,
@@ -6,16 +7,17 @@ import {
   Phone,
   CheckCircle,
   UserPlus,
-  Clock
+  Clock,
+  ListFilter
 } from 'lucide-react';
 import '../../css/Agentes/ChatCategories.css';
 
-interface ChatCategory {
-  icon: React.ReactNode;
-  label: string;
+interface ChatCategoriesProps {
+  onCategoryChange: (category: string) => void;
 }
 
 const categories: ChatCategory[] = [
+  { icon: <ListFilter size={20} />, label: 'Todos' },
   { icon: <MessageCircle size={20} />, label: 'Sin gestionar' },
   { icon: <Users size={20} />, label: 'Conversacion' },
   { icon: <Bug size={20} />, label: 'Depuracion' },
@@ -25,7 +27,7 @@ const categories: ChatCategory[] = [
   { icon: <UserPlus size={20} />, label: 'Venta Perdida' },
 ];
 
-const ChatCategories: React.FC = () => {
+const ChatCategories: React.FC<ChatCategoriesProps> = ({ onCategoryChange }) => {
   const [activeCategory, setActiveCategory] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const [startX, setStartX] = useState(0);
@@ -62,6 +64,11 @@ const ChatCategories: React.FC = () => {
     containerRef.current!.scrollLeft = scrollLeft - walk;
   };
 
+  const handleCategoryClick = (index: number) => {
+    setActiveCategory(index);
+    onCategoryChange(categories[index].label);
+  };
+
   return (
     <div
       ref={containerRef}
@@ -78,7 +85,7 @@ const ChatCategories: React.FC = () => {
             className={`flex items-center px-3 py-2 rounded-md whitespace-nowrap ${
               activeCategory === index ? 'bg-white text-blue-500' : 'text-gray-600'
             }`}
-            onClick={() => setActiveCategory(index)}
+            onClick={() => handleCategoryClick(index)}
           >
             {category.icon}
             <span className="ml-2 text-sm font-medium">{category.label}</span>
