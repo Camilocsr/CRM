@@ -1,24 +1,21 @@
 import React from 'react';
 import Split from 'react-split';
-import { Agente, Lead, Download } from './types';
+import { Lead, ChatInterfaceProps } from './types';
 import LeadList from './LeadList';
 import ChatWindow from './ChatWindow';
 import SearchBar from './SearchBar';
 import ChatCategories from './ChatCategories';
 
-interface ChatInterfaceProps {
-  agente: Agente | null;
-  downloads: Download[];
-  searchTerm: string;
-  setSearchTerm: (term: string) => void;
-  selectedCategory: string;
-  setSelectedCategory: (category: string) => void;
-  selectedChat: number | null;
-  setSelectedChat: (chatId: number | null) => void;
-  downloadFile: (url: string, fileName: string, chatId: number) => Promise<void>;
-  enpointAwsBucked: string;
-  enpointSenderMessage: string;
-}
+const categoryToTipoGestionMap: { [key: string]: string | null } = {
+  'Todos': null,
+  'Conversacion': 'gestionado',
+  'Sin gestionar': 'no gestionado',
+  'Depuracion': 'depuracion',
+  'Llamadas': 'llamada',
+  'Segunda Llamada': 'segunda llamada',
+  'Inscrito': 'inscrito',
+  'Venta Perdida': 'venta perdida'
+};
 
 const ChatInterface: React.FC<ChatInterfaceProps> = ({
   agente,
@@ -37,15 +34,14 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
     const lowerCaseSearchTerm = searchTerm.toLowerCase();
     const matchesSearch = lead.nombre.toLowerCase().includes(lowerCaseSearchTerm) ||
       lead.numeroWhatsapp.includes(lowerCaseSearchTerm);
-    
-    if (selectedCategory === 'Todos') {
+
+    const requiredTipoGestion = categoryToTipoGestionMap[selectedCategory];
+
+    if (requiredTipoGestion === null) {
       return matchesSearch;
-    } else if (selectedCategory === 'Conversacion') {
-      return matchesSearch && lead.TipoGestion === 'gestionado';
-    } else if (selectedCategory === 'Sin gestionar') {
-      return matchesSearch && lead.TipoGestion === 'no gestionado';
     }
-    
+
+    return matchesSearch && lead.TipoGestion === requiredTipoGestion;
   }) || [];
 
   return (

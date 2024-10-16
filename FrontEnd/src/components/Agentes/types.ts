@@ -40,3 +40,17 @@ export interface ChatCategory {
     icon: React.ReactNode;
     label: string;
 }
+
+export interface ChatInterfaceProps {
+    agente: Agente | null;
+    downloads: Download[];
+    searchTerm: string;
+    setSearchTerm: (term: string) => void;
+    selectedCategory: string;
+    setSelectedCategory: (category: string) => void;
+    selectedChat: number | null;
+    setSelectedChat: (chatId: number | null) => void;
+    downloadFile: (url: string, fileName: string, chatId: number) => Promise<void>;
+    enpointAwsBucked: string;
+    enpointSenderMessage: string;
+}
