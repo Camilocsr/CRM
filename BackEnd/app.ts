@@ -35,7 +35,7 @@ app.use((req, res, next) => {
 
 // Configuración de CORS
 app.use(cors({
-  origin: process.env.ENPOINT_APP_REACT,
+  origin: ['http://localhost', 'http://18.230.212.193:4173',`${process.env.ENPOINT_APP_REACT}`],
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true,
 }));
