@@ -15,11 +15,18 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
+// Filtramos el arreglo para evitar valores undefined
+const allowedOrigins = [
+  process.env.ENPOINT_APP_REACT,
+  'http://18.230.212.193',
+  'https://w4zv821b-80.use2.devtunnels.ms',
+].filter(origin => origin !== undefined); // Filtrando valores undefined
+
 const app = express();
 const httpServer = createServer(app);
 const io = new Server(httpServer, {
   cors: {
-    origin: process.env.ENPOINT_APP_REACT,
+    origin: allowedOrigins, // Utilizando la lista de orígenes permitidos
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true,
   },
@@ -36,7 +43,7 @@ app.use((req, res, next) => {
 
 // Configuración de CORS
 app.use(cors({
-  origin: ['http://localhost', 'http://18.230.212.193:4173',`${process.env.ENPOINT_APP_REACT}`, 'https://w4zv821b-80.use2.devtunnels.ms','http://localhost:80'],
+  origin: allowedOrigins, // Utilizando la lista de orígenes permitidos
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true,
 }));
@@ -48,7 +55,7 @@ app.use(
     resave: false,
     saveUninitialized: false,
     cookie: {
-      secure: process.env.NODE_ENV === 'production',
+      secure: process.env.NODE_ENV === 'production', // Asegúrate de que esto esté correcto en producción
       maxAge: 24 * 60 * 60 * 1000, // 24 horas
     },
   })
@@ -67,8 +74,8 @@ app.use(express.static(publicPath));
 // Rutas API
 app.use('/api', routesAuth);
 app.use('/api/whatsapp', whatsappRoutes);
-app.use('/api/', whatsappRoutesAgentes);
-app.use('/api/', leadsWhatsapp);
+app.use('/api', whatsappRoutesAgentes); // Cambié para que no se repita '/api/' 
+app.use('/api', leadsWhatsapp); // Cambié para que no se repita '/api/'
 
 // Configuración de Socket.IO
 io.on('connection', (socket) => {
@@ -83,10 +90,11 @@ io.on('connection', (socket) => {
 watchLeadChanges(io);
 
 // Función para iniciar el servidor
-const startServer = (port: number) => {
+const startServer = (port) => {
   httpServer.listen(port, () => {
     console.log(`Servidor corriendo en el puerto ${port}`);
   });
 };
 
+// Exportar la aplicación, el servidor y la función para iniciar el servidor
 export { app, io, startServer };
