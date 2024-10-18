@@ -4,6 +4,7 @@ import passport from 'passport';
 import cors from 'cors';
 import { createServer } from 'http';
 import { Server } from 'socket.io';
+import path from 'path';
 import whatsappRoutes from './src/routes/whatsappRoutes.routes';
 import whatsappRoutesAgentes from './src/routes/agentes/whatsappRoutesAgentes.routes';
 import leadsWhatsapp from './src/routes/leads/leadsWhatsapp.routes';
@@ -59,6 +60,9 @@ app.use(passport.session());
 
 // Middleware para parsear JSON
 app.use(express.json());
+
+const publicPath = path.join(__dirname, 'public');
+app.use(express.static(publicPath));
 
 // Rutas API
 app.use('/api', routesAuth);
