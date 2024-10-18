@@ -36,7 +36,7 @@ app.use((req, res, next) => {
 
 // Configuración de CORS
 app.use(cors({
-  origin: ['http://localhost', 'http://18.230.212.193:4173',`${process.env.ENPOINT_APP_REACT}`, 'https://w4zv821b-80.use2.devtunnels.ms'],
+  origin: ['http://localhost', 'http://18.230.212.193:4173',`${process.env.ENPOINT_APP_REACT}`, 'https://w4zv821b-80.use2.devtunnels.ms','http://localhost:80'],
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true,
 }));
