@@ -261,9 +261,10 @@
     height: 100vh;
 }
 
-.overflow-y-auto.h-[calc(100% - 120px)] {
+.overflow-y-auto {
     flex-grow: 1;
     overflow-y: auto;
+    height: calc(100% - 120px);
 }
 
 /* Media queries para responsividad */
