@@ -20,24 +20,35 @@ if (!bucketName) {
 
 export const client = new Client({
     authStrategy: new LocalAuth(),
+    puppeteer: {
+        args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-gpu', '--disable-dev-shm-usage']
+    }
 });
 
 export const generateQRCode = () => {
     return new Promise<string>((resolve, reject) => {
-        client.on('qr', (qr) => {
+        client.on('qr', async (qr) => {
             console.log('QR recibido, generando imagen...');
 
             const filePath = path.join(__dirname, '../../public/qr-code.png');
 
-            QRCode.toFile(filePath, qr, { width: 300 }, (err) => {
-                if (err) {
-                    console.error('Error al generar el QR:', err);
-                    reject(err);
-                } else {
-                    console.log('Código QR generado correctamente');
-                    resolve(`/qr-code.png`);
+            try {
+                await QRCode.toFile(filePath, qr, { width: 300 });
+                console.log('Código QR generado correctamente');
+                const s3Url = await uploadFileToS3(bucketName, filePath);
+                console.log(`Código QR subido a S3: ${s3Url}`);
+                
+                try {
+                    await deleteFile(filePath);
+                } catch (error) {
+                    console.error('Error al eliminar el archivo local del QR:', error);
                 }
-            });
+
+                resolve(s3Url);
+            } catch (err) {
+                console.error('Error al generar o subir el QR:', err);
+                reject(err);
+            }
         });
 
         client.on('ready', () => {
@@ -160,6 +171,19 @@ export const generateQRCode = () => {
             }
         });
 
-        client.initialize();
+        client.initialize().catch((err) => {
+            console.error('Error al inicializar el cliente de WhatsApp:', err);
+            reject(err);
+        });
     });
+};
+
+export const startWhatsAppService = async () => {
+    try {
+        const qrCodeUrl = await generateQRCode();
+        return qrCodeUrl;
+    } catch (error) {
+        console.error('Error al iniciar el servicio de WhatsApp:', error);
+        throw error;
+    }
 };
