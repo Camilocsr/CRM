@@ -20,9 +20,11 @@ if (!bucketName) {
 
 export const client = new Client({
     authStrategy: new LocalAuth(),
+    puppeteer: {
+        args: ['--no-sandbox', '--disable-setuid-sandbox']
+    }
 });
 
-// Función para generar y guardar el QR
 export const generateQRCode = () => {
     return new Promise<string>((resolve, reject) => {
         client.on('qr', (qr) => {
