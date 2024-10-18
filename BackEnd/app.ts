@@ -1,9 +1,9 @@
-import express from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import session from 'express-session';
 import passport from 'passport';
 import cors from 'cors';
 import { createServer } from 'http';
-import { Server } from 'socket.io';
+import { Server as SocketIOServer } from 'socket.io';
 import path from 'path';
 import whatsappRoutes from './src/routes/whatsappRoutes.routes';
 import whatsappRoutesAgentes from './src/routes/agentes/whatsappRoutesAgentes.routes';
@@ -20,11 +20,11 @@ const allowedOrigins = [
   process.env.ENPOINT_APP_REACT,
   'http://18.230.212.193',
   'https://w4zv821b-80.use2.devtunnels.ms',
-].filter(origin => origin !== undefined); // Filtrando valores undefined
+].filter((origin): origin is string => origin !== undefined); // Filtrando valores undefined
 
 const app = express();
 const httpServer = createServer(app);
-const io = new Server(httpServer, {
+const io = new SocketIOServer(httpServer, {
   cors: {
     origin: allowedOrigins, // Utilizando la lista de orígenes permitidos
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
@@ -33,7 +33,7 @@ const io = new Server(httpServer, {
 });
 
 // Middleware para agregar encabezados de seguridad
-app.use((req, res, next) => {
+app.use((req: Request, res: Response, next: NextFunction) => {
   res.setHeader("Content-Security-Policy", "script-src 'self' 'unsafe-inline'");
   res.setHeader("X-Content-Type-Options", "nosniff");
   res.setHeader("X-Frame-Options", "DENY");
@@ -90,7 +90,7 @@ io.on('connection', (socket) => {
 watchLeadChanges(io);
 
 // Función para iniciar el servidor
-const startServer = (port) => {
+const startServer = (port: number) => {
   httpServer.listen(port, () => {
     console.log(`Servidor corriendo en el puerto ${port}`);
   });
