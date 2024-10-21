@@ -4,4 +4,5 @@ export interface DecodedCredential {
 
 export interface GoogleAuthProps {
     setEmail: (email: string) => void;
+    email: string;
 }

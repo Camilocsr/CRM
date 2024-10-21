@@ -53,4 +53,5 @@ export interface ChatInterfaceProps {
     downloadFile: (url: string, fileName: string, chatId: number) => Promise<void>;
     enpointAwsBucked: string;
     enpointSenderMessage: string;
+    setEmail: (email: string) => void;
 }

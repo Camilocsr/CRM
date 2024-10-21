@@ -1,8 +1,8 @@
-import { GoogleLogin, CredentialResponse, googleLogout } from '@react-oauth/google';
+import { GoogleLogin, CredentialResponse } from '@react-oauth/google';
 import { jwtDecode } from 'jwt-decode';
 import { DecodedCredential, GoogleAuthProps } from './types';
 
-const GoogleAuth: React.FC<GoogleAuthProps> = ({ setEmail }) => {
+const GoogleAuth: React.FC<GoogleAuthProps> = ({ setEmail, email }) => {
   const handleLoginSuccess = (response: CredentialResponse) => {
     console.log('Login exitoso:', response);
     
@@ -17,18 +17,14 @@ const GoogleAuth: React.FC<GoogleAuthProps> = ({ setEmail }) => {
     console.error('Error al iniciar sesión con Google');
   };
 
-  const handleLogout = () => {
-    googleLogout();
-    setEmail(''); // Limpiar el email al cerrar sesión
-    console.log('Sesión de Google cerrada');
-  };
+  if (email) {
+    return null;
+  }
 
+  // Si el usuario no está autenticado, mostramos el botón de Google Login
   return (
     <div style={{ marginTop: '20px' }}>
       <GoogleLogin onSuccess={handleLoginSuccess} onError={handleLoginError} />
-      <button onClick={handleLogout} style={{ marginLeft: '10px' }}>
-        Cerrar Sesión
-      </button>
     </div>
   );
 };

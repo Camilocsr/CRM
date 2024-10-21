@@ -5,7 +5,8 @@ import LeadList from './LeadList';
 import ChatWindow from './ChatWindow';
 import SearchBar from './SearchBar';
 import ChatCategories from './ChatCategories';
-import '../../css/Agentes/ChatInterface.css'
+import '../../css/Agentes/ChatInterface.css';
+import { googleLogout } from '@react-oauth/google';
 
 const categoryToTipoGestionMap: { [key: string]: string | null } = {
   'Todos': null,
@@ -30,6 +31,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   downloadFile,
   enpointAwsBucked,
   enpointSenderMessage,
+  setEmail
 }) => {
   const filteredLeads = agente?.leads.filter((lead: Lead) => {
     const lowerCaseSearchTerm = searchTerm.toLowerCase();
@@ -44,6 +46,12 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
 
     return matchesSearch && lead.TipoGestion === requiredTipoGestion;
   }) || [];
+
+  const handleLogout = () => {
+    googleLogout();
+    setEmail('');
+    console.log('Sesión de Google cerrada');
+  };
 
   return (
     <Split
@@ -61,7 +69,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
       <div className="bg-white border-r overflow-hidden">
         <div className="p-4 bg-gray-200 flex justify-between items-center">
           <h1 className="text-xl font-semibold">Whatsapp Innovacion.</h1>
-          <button className='Btn_Cerrar_Sesion'>Cerrar sesion.</button>
+          <button className='Btn_Cerrar_Sesion' onClick={handleLogout}>Cerrar sesion.</button>
         </div>
         <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
         <ChatCategories onCategoryChange={setSelectedCategory} />

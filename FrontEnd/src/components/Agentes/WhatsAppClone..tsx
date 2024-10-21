@@ -18,9 +18,10 @@ interface WebSocketMessage {
 
 interface WhatsAppCloneProps {
   email: string;
+  setEmail: React.Dispatch<React.SetStateAction<string>>;
 }
 
-const WhatsAppClone: React.FC<WhatsAppCloneProps> = ({ email }) => {
+const WhatsAppClone: React.FC<WhatsAppCloneProps> = ({ email,setEmail }) => {
   const [selectedChat, setSelectedChat] = useState<number | null>(null);
   const [agente, setAgente] = useState<Agente | null>(null);
   const [downloads, setDownloads] = useState<Download[]>([]);
@@ -81,6 +82,7 @@ const WhatsAppClone: React.FC<WhatsAppCloneProps> = ({ email }) => {
         downloadFile={downloadFile}
         enpointAwsBucked={enpointAwsBucked}
         enpointSenderMessage={enpointSenderMessage}
+        setEmail={setEmail}
       />
     </>
   );
