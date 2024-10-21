@@ -16,7 +16,11 @@ interface WebSocketMessage {
   conversacion: Message[];
 }
 
-const WhatsAppClone: React.FC = () => {
+interface WhatsAppCloneProps {
+  email: string;
+}
+
+const WhatsAppClone: React.FC<WhatsAppCloneProps> = ({ email }) => {
   const [selectedChat, setSelectedChat] = useState<number | null>(null);
   const [agente, setAgente] = useState<Agente | null>(null);
   const [downloads, setDownloads] = useState<Download[]>([]);
@@ -25,7 +29,7 @@ const WhatsAppClone: React.FC = () => {
 
   const fetchAgenteData = async () => {
     try {
-      const response = await fetch(`${enpointGetInfoAgentes}${encodeURIComponent('iudcdesarrollo@gamil.com')}`);
+      const response = await fetch(`${enpointGetInfoAgentes}${encodeURIComponent(`${email}`)}`);
       if (!response.ok) throw new Error('Network response was not ok');
       const data = await response.json();
       console.log(data);

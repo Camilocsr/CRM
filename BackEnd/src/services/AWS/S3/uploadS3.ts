@@ -5,6 +5,16 @@ import { v4 as uuidv4 } from "uuid";
 import ffmpeg from "fluent-ffmpeg";
 import ffmpegPath from "ffmpeg-static";
 import isNotImageFile from "../../../utils/isNotAudioFile";
+import dotenv from 'dotenv';
+
+dotenv.config();
+
+const accessKeyIdAWS = process.env.ACCESKEY_ID;
+const secretAccessKeyAWS = process.env.SECRET_KEY;
+
+if (!accessKeyIdAWS || !secretAccessKeyAWS) {
+    throw new Error("Credenciales de AWS faltantes. Verifica tus variables de entorno.");
+}
 
 async function removeOpusCodec(filePath: string): Promise<string> {
     return new Promise((resolve, reject) => {
@@ -32,24 +42,21 @@ async function removeOpusCodec(filePath: string): Promise<string> {
 }
 
 async function uploadFileToS3(bucketName: string, filePath: string): Promise<string> {
-    const s3Client = new S3Client({});
+    const s3Client = new S3Client({
+        region: 'sa-east-1',
+        credentials: {
+            accessKeyId: accessKeyIdAWS!,
+            secretAccessKey: secretAccessKeyAWS!,
+        },
+    });
+
     try {
         const isImagen = await isNotImageFile(filePath);
-
-        let processedFilePath;
-
-        if (isImagen) {
-            processedFilePath = await removeOpusCodec(filePath);
-        }
-        else {
-            processedFilePath = filePath;
-        }
+        let processedFilePath = isImagen ? await removeOpusCodec(filePath) : filePath;
 
         const fileContent = await readFile(processedFilePath);
-
         const originalFileName = basename(processedFilePath);
         const fileExtension = originalFileName.split('.').pop();
-
         const fileName = `${uuidv4()}.${fileExtension}`;
         const key = `uploads/${fileName}`;
 
@@ -57,7 +64,7 @@ async function uploadFileToS3(bucketName: string, filePath: string): Promise<str
             Bucket: bucketName,
             Key: key,
             Body: fileContent,
-            ContentType: `audio/${fileExtension}`
+            ContentType: `audio/${fileExtension}`,
         };
 
         const command = new PutObjectCommand(uploadParams);
