@@ -1,6 +1,6 @@
 import { GoogleLogin, CredentialResponse, googleLogout } from '@react-oauth/google';
 import { jwtDecode } from 'jwt-decode';
-import { DecodedCredential, GoogleAuthProps} from './types';
+import { DecodedCredential, GoogleAuthProps } from './types';
 
 const GoogleAuth: React.FC<GoogleAuthProps> = ({ setEmail }) => {
   const handleLoginSuccess = (response: CredentialResponse) => {

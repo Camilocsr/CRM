@@ -18,11 +18,27 @@ const App: React.FC = () => {
 
     gapi.load('client:auth2', initClient);
   }, [clientIdGoogle]);
-  
+
+  useEffect(() => {
+    const storedEmail = localStorage.getItem('userEmail');
+    if (storedEmail) {
+      setEmail(storedEmail);
+    }
+  }, []);
+
+  const handleSetEmail = (newEmail: string) => {
+    setEmail(newEmail);
+    if (newEmail) {
+      localStorage.setItem('userEmail', newEmail);
+    } else {
+      localStorage.removeItem('userEmail');
+    }
+  };
+
   return (
     <>
       {email && <WhatsAppClone email={email} />}
-      <GoogleAuth setEmail={setEmail} />
+      <GoogleAuth setEmail={handleSetEmail} />
     </>
   );
 };
