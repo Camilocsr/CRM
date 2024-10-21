@@ -25,7 +25,7 @@ const ChatWindow: React.FC<ChatWindowProps> = ({
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const toggleSidebar = () => {
-    console.log('Se hizo clic en los tres puntos');
+    //console.log('Se hizo clic en los tres puntos');
     setIsSidebarOpen((prev) => !prev);
   };
 

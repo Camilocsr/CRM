@@ -37,8 +37,11 @@ const App: React.FC = () => {
 
   return (
     <>
-      {email && <WhatsAppClone email={email} />}
-      <GoogleAuth setEmail={handleSetEmail} />
+      {email ? (
+        <WhatsAppClone email={email} />
+      ) : (
+        <GoogleAuth setEmail={handleSetEmail} />
+      )}
     </>
   );
 };

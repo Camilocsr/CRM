@@ -19,7 +19,7 @@ const GoogleAuth: React.FC<GoogleAuthProps> = ({ setEmail }) => {
 
   const handleLogout = () => {
     googleLogout();
-    setEmail('');
+    setEmail(''); // Limpiar el email al cerrar sesión
     console.log('Sesión de Google cerrada');
   };
 

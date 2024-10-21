@@ -5,6 +5,7 @@ import LeadList from './LeadList';
 import ChatWindow from './ChatWindow';
 import SearchBar from './SearchBar';
 import ChatCategories from './ChatCategories';
+import '../../css/Agentes/ChatInterface.css'
 
 const categoryToTipoGestionMap: { [key: string]: string | null } = {
   'Todos': null,
@@ -60,6 +61,7 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
       <div className="bg-white border-r overflow-hidden">
         <div className="p-4 bg-gray-200 flex justify-between items-center">
           <h1 className="text-xl font-semibold">Whatsapp Innovacion.</h1>
+          <button className='Btn_Cerrar_Sesion'>Cerrar sesion.</button>
         </div>
         <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
         <ChatCategories onCategoryChange={setSelectedCategory} />
