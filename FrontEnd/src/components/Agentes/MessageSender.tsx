@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { MessageSenderProps } from './types';
+import { Send, Mic, Paperclip } from 'lucide-react';
+import '../../css/Agentes/MessageSender.css';
 
 const MessageSender: React.FC<MessageSenderProps> = ({
     selectedChat,
@@ -35,21 +37,47 @@ const MessageSender: React.FC<MessageSenderProps> = ({
         }
     };
 
+    const handleAudioRecord = () => {
+        // Implementar lógica para grabar audio
+        console.log('Grabando audio...');
+    };
+
+    const handleFileUpload = () => {
+        // Implementar lógica para subir archivos
+        console.log('Subiendo archivo...');
+    };
+
     return (
-        <div className="p-4 bg-gray-200 flex items-center">
+        <div className="message-sender-container">
             <input
                 type="text"
                 placeholder="Escribe un mensaje"
                 value={messageText}
                 onChange={(e) => setMessageText(e.target.value)}
                 onKeyPress={handleKeyPress}
-                className="w-full p-2 rounded-full border border-gray-300 focus:outline-none focus:border-blue-500"
+                className="message-input"
             />
             <button
-                className="ml-2 p-2 bg-blue-500 text-white rounded-full hover:bg-blue-600 transition duration-200"
-                onClick={sendMessage}
+                className="btn-action"
+                onClick={handleAudioRecord}
+                title="Grabar audio"
             >
-                Enviar
+                <Mic />
+            </button>
+            <button
+                className="btn-action"
+                onClick={handleFileUpload}
+                title="Subir archivo"
+            >
+                <Paperclip />
+            </button>
+            <button
+                className="btn-send"
+                onClick={sendMessage}
+                title="Enviar mensaje"
+                disabled={!messageText.trim()}
+            >
+                <Send />
             </button>
         </div>
     );
