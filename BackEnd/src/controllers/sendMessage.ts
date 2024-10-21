@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { client } from '../services/whatsappService';
 import { PrismaClient } from '@prisma/client';
+import uploadFileToS3 from '../services/AWS/S3/uploadS3';
 
 const prisma = new PrismaClient();
 

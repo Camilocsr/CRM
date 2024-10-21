@@ -31,6 +31,9 @@
     margin-left: 8px;
     cursor: pointer;
     transition: all 0.2s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .btn-action:hover {
@@ -48,9 +51,14 @@
     border: none;
     border-radius: 50%;
     padding: 10px;
+    height: 40px;
+    width: 40px;
     margin-left: 8px;
     cursor: pointer;
     transition: all 0.2s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .btn-send:hover {
@@ -66,4 +74,6 @@
     width: 24px;
     height: 24px;
     color: #fff;
+    display: block;
+    margin: auto;
 }

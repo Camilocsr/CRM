@@ -16,7 +16,7 @@ const MessageList: React.FC<MessageListProps> = ({
   downloads, 
   downloadFile, 
   enpointAwsBucked,
-  profilePictureUrl 
+  profilePictureUrl
 }) => {
   const [audioPlaying, setAudioPlaying] = useState<{ [key: string]: boolean }>({});
   const messagesEndRef = useRef<HTMLDivElement>(null);
