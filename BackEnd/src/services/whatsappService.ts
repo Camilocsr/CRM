@@ -1,13 +1,14 @@
-import { Client, LocalAuth, MessageMedia } from 'whatsapp-web.js';
+import { Client, LocalAuth } from 'whatsapp-web.js';
 import QRCode from 'qrcode';
 import path from 'path';
 import { PrismaClient } from '@prisma/client';
 import uploadFileToS3 from './AWS/S3/uploadS3';
-import fs from 'fs/promises';
 import dotenv from 'dotenv';
 import getAgentWithFewestLeads from './Whatsapp/agentLeadManager';
 import { getAndSaveProfilePicture } from './Whatsapp/getAndSaveProfilePicture';
 import { deleteFile } from '../utils/deleteFile';
+import { primerTemplate } from './Whatsapp/templates';
+import handleMediaMessage from './Whatsapp/handleMediaMessage';
 
 dotenv.config();
 
@@ -86,25 +87,6 @@ export const generateQRCode = () => {
             let conversation: { Cliente: string; message: string; timestamp: string }[] = [];
             const currentTimestamp = new Date().toISOString();
 
-            const handleMediaMessage = async (media: MessageMedia) => {
-                const buffer = Buffer.from(media.data, 'base64');
-                const fileType = media.mimetype.split('/');
-                const fileExtension = fileType[1];
-                const newFileName = `${Date.now()}.${fileExtension}`;
-                const filePath = path.join(__dirname, '../../uploads', newFileName);
-
-                await fs.writeFile(filePath, buffer);
-                const s3Url = await uploadFileToS3(bucketName, filePath);
-
-                try {
-                    await deleteFile(filePath);
-                } catch (error) {
-                    console.error('Error al eliminar el archivo local:', error);
-                }
-
-                return s3Url;
-            };
-
             if (!existingLead) {
                 const tipoGestionNoGestionado = await prisma.tipoGestion.findUnique({
                     where: { tipoGestion: 'no gestionado' },
@@ -114,7 +96,7 @@ export const generateQRCode = () => {
 
                 if (message.hasMedia) {
                     const media = await message.downloadMedia();
-                    const s3Url = await handleMediaMessage(media);
+                    const s3Url = await handleMediaMessage(media, bucketName);
                     if (s3Url) {
                         conversation.push({ Cliente: 'cliente', message: s3Url, timestamp: currentTimestamp });
                     }
@@ -134,7 +116,14 @@ export const generateQRCode = () => {
                 });
 
                 console.log(`Nuevo lead creado: ${JSON.stringify(newLead)}`);
-                message.reply('¡Gracias! Tu información ha sido registrada.');
+                await message.reply(`${primerTemplate}`);
+                
+                await prisma.lead.update({
+                    where: { id: newLead.id },
+                    data: {
+                        conversacion: JSON.stringify(conversation),
+                    },
+                });
             } else {
                 if (existingLead.nombre === 'Sin nombre') {
                     await prisma.lead.update({
@@ -152,7 +141,7 @@ export const generateQRCode = () => {
 
                 if (message.hasMedia) {
                     const media = await message.downloadMedia();
-                    const s3Url = await handleMediaMessage(media);
+                    const s3Url = await handleMediaMessage(media, bucketName);
                     if (s3Url) {
                         conversation.push({ Cliente: 'cliente', message: s3Url, timestamp: currentTimestamp });
                     }

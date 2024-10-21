@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Split from 'react-split';
 import { Lead, ChatInterfaceProps } from './types';
 import LeadList from './LeadList';
@@ -7,24 +7,13 @@ import SearchBar from './SearchBar';
 import ChatCategories from './ChatCategories';
 import '../../css/Agentes/ChatInterface.css';
 import { googleLogout } from '@react-oauth/google';
-
-const categoryToTipoGestionMap: { [key: string]: string | null } = {
-  'Todos': null,
-  'Conversacion': 'gestionado',
-  'Sin gestionar': 'no gestionado',
-  'Depuracion': 'depuracion',
-  'Llamadas': 'llamada',
-  'Segunda Llamada': 'segunda llamada',
-  'Inscrito': 'inscrito',
-  'Venta Perdida': 'venta perdida'
-};
+import { fetchLeadsByCategory } from '../../services/leadService';
 
 const ChatInterface: React.FC<ChatInterfaceProps> = ({
   agente,
   downloads,
   searchTerm,
   setSearchTerm,
-  selectedCategory,
   setSelectedCategory,
   selectedChat,
   setSelectedChat,
@@ -33,19 +22,43 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
   enpointSenderMessage,
   setEmail
 }) => {
-  const filteredLeads = agente?.leads.filter((lead: Lead) => {
-    const lowerCaseSearchTerm = searchTerm.toLowerCase();
-    const matchesSearch = lead.nombre.toLowerCase().includes(lowerCaseSearchTerm) ||
-      lead.numeroWhatsapp.includes(lowerCaseSearchTerm);
+  const [filteredLeads, setFilteredLeads] = useState<Lead[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [currentCategory, setCurrentCategory] = useState('Todos');
 
-    const requiredTipoGestion = categoryToTipoGestionMap[selectedCategory];
-
-    if (requiredTipoGestion === null) {
-      return matchesSearch;
+  useEffect(() => {
+    if (agente) {
+      handleCategoryChange('Todos');
     }
+  }, [agente]);
 
-    return matchesSearch && lead.TipoGestion === requiredTipoGestion;
-  }) || [];
+  const handleCategoryChange = async (category: string) => {
+    setIsLoading(true);
+    setCurrentCategory(category);
+    setSelectedCategory(category);
+    try {
+      const leads = await fetchLeadsByCategory(category, agente?.nombre || '');
+      setFilteredLeads(leads);
+    } catch (error) {
+      console.error('Error fetching leads:', error);
+      setFilteredLeads([]);
+    }
+    setIsLoading(false);
+  };
+
+  const handleSearch = (term: string) => {
+    setSearchTerm(term);
+    if (term.trim() === '') {
+      handleCategoryChange(currentCategory);
+    } else {
+      const searchedLeads = filteredLeads.filter((lead: Lead) => {
+        const lowerCaseSearchTerm = term.toLowerCase();
+        return lead.nombre?.toLowerCase().includes(lowerCaseSearchTerm) ||
+          lead.numeroWhatsapp.includes(lowerCaseSearchTerm);
+      });
+      setFilteredLeads(searchedLeads);
+    }
+  };
 
   const handleLogout = () => {
     googleLogout();
@@ -71,9 +84,13 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({
           <h1 className="text-xl font-semibold">Whatsapp Innovacion.</h1>
           <button className='Btn_Cerrar_Sesion' onClick={handleLogout}>Cerrar sesion.</button>
         </div>
-        <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
-        <ChatCategories onCategoryChange={setSelectedCategory} />
-        <LeadList leads={filteredLeads} selectedChat={selectedChat} setSelectedChat={setSelectedChat} />
+        <SearchBar searchTerm={searchTerm} setSearchTerm={handleSearch} />
+        <ChatCategories onCategoryChange={handleCategoryChange} />
+        {isLoading ? (
+          <div>Cargando...</div>
+        ) : (
+          <LeadList leads={filteredLeads} selectedChat={selectedChat} setSelectedChat={setSelectedChat} />
+        )}
       </div>
 
       <div className="flex-1 flex flex-col overflow-hidden">

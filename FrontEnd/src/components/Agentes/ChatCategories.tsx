@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { ChatCategory } from './types';
-import { 
+import {
   MessageCircle,
   Users,
   Bug,
@@ -18,13 +18,13 @@ interface ChatCategoriesProps {
 
 const categories: ChatCategory[] = [
   { icon: <ListFilter size={20} />, label: 'Todos' },
-  { icon: <MessageCircle size={20} />, label: 'Sin gestionar' },
-  { icon: <Users size={20} />, label: 'Conversacion' },
-  { icon: <Bug size={20} />, label: 'Depuracion' },
-  { icon: <Phone size={20} />, label: 'Llamadas' },
-  { icon: <Clock size={20} />, label: 'Segunda Llamada' },
-  { icon: <CheckCircle size={20} />, label: 'Inscrito' },
-  { icon: <UserPlus size={20} />, label: 'Venta Perdida' },
+  { icon: <MessageCircle size={20} />, label: 'sin Gestionar' },
+  { icon: <Users size={20} />, label: 'conversacion' },
+  { icon: <Bug size={20} />, label: 'depuracion' },
+  { icon: <Phone size={20} />, label: 'llamada' },
+  { icon: <Clock size={20} />, label: 'segunda Llamada' },
+  { icon: <CheckCircle size={20} />, label: 'inscrito' },
+  { icon: <UserPlus size={20} />, label: 'venta perdida' },
 ];
 
 const ChatCategories: React.FC<ChatCategoriesProps> = ({ onCategoryChange }) => {
